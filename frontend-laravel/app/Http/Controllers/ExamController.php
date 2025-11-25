@@ -5,23 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Exam;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ExamController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): \Inertia\Response
     {
-        //
+        return Inertia::render('landing-page',[]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function generate(Exam $exam): \Inertia\Response
     {
-        //
+        return Inertia::render('generate-exam-form',[]);
     }
 
     /**
@@ -35,15 +36,22 @@ class ExamController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Exam $exam)
+    public function view(Exam $exam)
     {
-        //
+        return Inertia::render('exam-view',[]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Exam $exam)
+    {
+        //
+    }
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function export()
     {
         //
     }
