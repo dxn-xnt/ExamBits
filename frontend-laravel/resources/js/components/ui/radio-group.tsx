@@ -1,43 +1,66 @@
-import * as React from "react"
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
-import { CircleIcon } from "lucide-react"
+import { useState } from "react";
 
-import { cn } from "@/lib/utils"
 
-function RadioGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
-  return (
-    <RadioGroupPrimitive.Root
-      data-slot="radio-group"
-      className={cn("grid gap-3", className)}
-      {...props}
-    />
-  )
+type Option = {
+    id: string;
+    label: string;
+    color?: "blue" | "green" | "red" | "violet" | "yellow";
+};
+
+
+interface ToggleRadioGroupProps {
+    options: Option[];
 }
 
-function RadioGroupItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
-  return (
-    <RadioGroupPrimitive.Item
-      data-slot="radio-group-item"
-      className={cn(
-        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      {...props}
-    >
-      <RadioGroupPrimitive.Indicator
-        data-slot="radio-group-indicator"
-        className="relative flex items-center justify-center"
-      >
-        <CircleIcon className="fill-primary absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2" />
-      </RadioGroupPrimitive.Indicator>
-    </RadioGroupPrimitive.Item>
-  )
+interface RadioButtonProps {
+    option: Option;
+    isSelected: boolean;
+    onSelect: (id: string) => void;
 }
 
-export { RadioGroup, RadioGroupItem }
+function RadioButton({ option, isSelected, onSelect }: RadioButtonProps) {
+    const baseClasses =
+        "px-4 py-1.5 text-md rounded-md border-2 border-card-foreground text-foreground transition-colors";
+
+    const colorClass = option.color === "blue"
+        ? "bg-accent-blue border-accent-blue "
+        : option.color === "green"
+            ? "bg-accent-green border-accent-green"
+            : option.color === "red"
+                ? "bg-accent-red border-accent-red"
+                : option.color === "violet"
+                    ? "bg-accent-violet border-accent-violet"
+                    : option.color === "yellow"
+                        ? "bg-accent-yellow border-accent-yellow"
+                        : "";
+
+    const unselectedClasses =
+        "bg-transparent";
+
+    return (
+        <button
+            type="button"
+            onClick={() => onSelect(option.id)}
+            className={`${baseClasses} ${isSelected ? colorClass : unselectedClasses}`}
+        >
+            {option.label}
+        </button>
+    );
+}
+
+export default function ToggleRadioGroup({ options }: ToggleRadioGroupProps) {
+    const [selected, setSelected] = useState<string>(options[0].id);
+
+    return (
+        <div className="flex gap-2">
+            {options.map((option) => (
+                <RadioButton
+                    key={option.id}
+                    option={option}
+                    isSelected={selected === option.id}
+                    onSelect={setSelected}
+                />
+            ))}
+        </div>
+    );
+}
