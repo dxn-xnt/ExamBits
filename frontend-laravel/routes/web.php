@@ -12,7 +12,7 @@ use App\Http\Controllers\ExamController;
 
 // Home / Landing Page
 Route::get('/', function () {
-    return Inertia::render('welcome', []);
+    return Inertia::render('landing-page', []);
 })->name('home');
 
 // Exam Generator - input form
@@ -26,7 +26,7 @@ Route::post('/exam-generator/generate', [ExamController::class, 'generate'])
     ->name('exam.generate-exam');
 
 // View generated exam before export
-Route::get('/exam-generator/view/{examId}', [ExamController::class, 'view'])
+Route::get('/exam-generator/view/id', [ExamController::class, 'view'])
     ->name('exam.view');
 
 // Export generated exam (PDF / Word / etc.)

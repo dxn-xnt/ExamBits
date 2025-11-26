@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 import {AppContent} from "@/components/app-content";
 import {AppShell} from "@/components/app-shell";
 import {AppHeader} from "@/components/app-header";
+import {AppFooter} from "@/components/app-footer";
 
 interface AppLayoutProps {
     children: ReactNode;
@@ -14,6 +15,7 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
         <AppContent variant="header" className="overflow-x-hidden">
             <AppHeader breadcrumbs={breadcrumbs}/>
             {children}
+            <AppFooter/>
         </AppContent>
     </AppShell>
 );
