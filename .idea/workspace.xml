@@ -4,22 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="51c0b07b-925f-4a58-8a03-a4d0cd2eeff4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend-laravel/routes/api.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Models/Exam.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Models/Exam.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/app.py" afterDir="false" />
+    <list default="true" id="51c0b07b-925f-4a58-8a03-a4d0cd2eeff4" name="Changes" comment="try">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +19,11 @@
     </execution>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -194,7 +185,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "roy-dev",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -221,11 +212,24 @@
       <option name="presentableId" value="Default" />
       <updated>1764078884280</updated>
       <workItem from="1764078885561" duration="1358000" />
-      <workItem from="1764134959171" duration="5610000" />
+      <workItem from="1764134959171" duration="6065000" />
     </task>
+    <task id="LOCAL-00001" summary="try">
+      <option name="closed" value="true" />
+      <created>1764142402738</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1764142402740</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="try" />
+    <option name="LAST_COMMIT_MESSAGE" value="try" />
   </component>
 </project>
