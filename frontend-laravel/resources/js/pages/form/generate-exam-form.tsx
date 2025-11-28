@@ -56,7 +56,7 @@ export default function GenerateExamForm() {
 
         // Send question types as array
         questionTypes.forEach((type, index) => {
-            formData.append(question_types[${index}], type);
+            formData.append(`question_types[${index}]`, type);
         });
 
         try {

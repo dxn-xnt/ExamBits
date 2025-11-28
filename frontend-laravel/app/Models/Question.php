@@ -12,18 +12,18 @@ class Question extends Model
     protected $fillable = [
         'exam_id',
         'question_text',
-        'type',
+        'question_type',
         'options',
         'correct_answer',
         'explanation',
-        'difficulty',
-        'ai_generated',
-        'order'
+        'order',
+        'points'
     ];
 
     protected $casts = [
         'options' => 'array',
-        'ai_generated' => 'boolean'
+        'order' => 'integer',
+        'points' => 'integer'
     ];
 
     public function exam()

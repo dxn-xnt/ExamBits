@@ -12,14 +12,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exam_id')->constrained()->onDelete('cascade');
             $table->text('question_text');
-            $table->string('type'); // multiple-choice, true-false, short-answer
-            $table->json('options')->nullable();
-            $table->string('correct_answer');
+            $table->string('question_type'); // multiple-choice, true-false, short-answer
+            $table->json('options')->nullable(); // For multiple choice options
+            $table->text('correct_answer');
             $table->text('explanation')->nullable();
-            $table->string('difficulty')->default('medium');
-            $table->boolean('ai_generated')->default(false);
             $table->integer('order')->default(0);
+            $table->integer('points')->default(1);
             $table->timestamps();
+
+            $table->index(['exam_id', 'order']);
         });
     }
 

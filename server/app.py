@@ -6,6 +6,7 @@ import PyPDF2
 import json
 import io
 import requests
+import re
 
 # Load environment variables
 load_dotenv()
@@ -21,8 +22,8 @@ OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
 AI_MODEL = os.getenv('AI_MODEL', 'openai/gpt-4-turbo-preview')
 
 
-def call_ai_model(messages, temperature=0.7, max_tokens=2000):
-    """Call OpenRouter API for AI completions"""
+def call_ai_model(messages, temperature=0.7, max_tokens=600):
+    """Call OpenRouter API for AI completions with minimal token limit"""
     try:
         if not OPENROUTER_API_KEY:
             raise Exception("OpenRouter API key not configured")
@@ -59,30 +60,85 @@ def call_ai_model(messages, temperature=0.7, max_tokens=2000):
         raise Exception(f"AI API call failed: {str(e)}")
 
 
-# Original routes (keeping your existing structure)
+def extract_main_topic(text, max_length=1000):
+    """Extract and summarize the main topic from text using simple text analysis"""
+    # Take a sample from the beginning, middle, and end
+    text_length = len(text)
+
+    if text_length <= max_length:
+        sample_text = text
+    else:
+        # Sample from different parts
+        part_size = max_length // 3
+        beginning = text[:part_size]
+        middle_start = (text_length // 2) - (part_size // 2)
+        middle = text[middle_start:middle_start + part_size]
+        end = text[-part_size:]
+        sample_text = beginning + "\n...\n" + middle + "\n...\n" + end
+
+    # Clean the text
+    sample_text = re.sub(r'\s+', ' ', sample_text).strip()
+
+    # Extract keywords and generate a simple topic description
+    # This is a basic approach - you could enhance with NLP libraries
+    lines = sample_text.split('\n')
+    # Get first few meaningful lines (likely titles/headers)
+    meaningful_lines = [line.strip() for line in lines if len(line.strip()) > 20][:5]
+
+    return ' '.join(meaningful_lines[:3]) if meaningful_lines else sample_text[:500]
+
+
+def analyze_topic_with_ai(text_sample):
+    """Use AI to extract the main topic in one sentence"""
+    prompt = f"""Analyze this educational content and provide ONLY a one-sentence topic description (max 20 words).
+
+Content sample:
+{text_sample}
+
+Respond with ONLY the topic sentence, nothing else."""
+
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a content analyzer. Respond only with a brief topic description."
+        },
+        {
+            "role": "user",
+            "content": prompt
+        }
+    ]
+
+    try:
+        # Use minimal tokens for topic extraction
+        topic = call_ai_model(messages, temperature=0.3, max_tokens=50)
+        return topic.strip()
+    except Exception as e:
+        print(f"AI topic analysis failed, using fallback: {str(e)}")
+        # Fallback to simple extraction
+        return text_sample[:200]
+
+
+# Original routes
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({
         "message": "Flask API is working!",
         "service": "ExamBits AI Service",
-        "version": "1.0.0"
+        "version": "2.0.0 (Topic-Based)"
     })
 
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    """Your original generate endpoint - keeping for compatibility"""
+    """Original generate endpoint"""
     data = request.json
     text = data.get("text", "")
-
-    # Example response
     return jsonify({
         "input_text": text,
         "msg": "This is where AI processing will happen."
     })
 
 
-# New API routes for ExamBits
 @app.route("/api/health", methods=["GET"])
 def health():
     """Health check endpoint"""
@@ -149,9 +205,9 @@ def extract_pdf():
         }), 500
 
 
-@app.route("/api/ai/generate-questions", methods=["POST"])
-def generate_questions():
-    """Generate exam questions from content using AI"""
+@app.route("/api/ai/analyze-topic", methods=["POST"])
+def analyze_topic():
+    """Extract main topic from content (NEW ENDPOINT)"""
     try:
         data = request.json
 
@@ -159,15 +215,58 @@ def generate_questions():
             return jsonify({"success": False, "error": "No data provided"}), 400
 
         content = data.get('content', '')
+
+        if not content or len(content.strip()) < 50:
+            return jsonify({
+                "success": False,
+                "error": "Content is too short"
+            }), 400
+
+        print(f"Analyzing topic from {len(content)} characters...")
+
+        # Extract a sample for analysis
+        text_sample = extract_main_topic(content, max_length=1000)
+
+        # Use AI to get concise topic
+        topic = analyze_topic_with_ai(text_sample)
+
+        print(f"Extracted topic: {topic}")
+
+        return jsonify({
+            "success": True,
+            "topic": topic,
+            "content_length": len(content)
+        })
+
+    except Exception as e:
+        print(f"Error in analyze_topic: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": "Topic analysis failed",
+            "details": str(e)
+        }), 500
+
+
+@app.route("/api/ai/generate-questions", methods=["POST"])
+def generate_questions():
+    """Generate exam questions from TOPIC (not full content)"""
+    try:
+        data = request.json
+
+        if not data:
+            return jsonify({"success": False, "error": "No data provided"}), 400
+
+        # Now expecting 'topic' instead of 'content'
+        topic = data.get('topic', '')
         num_questions = int(data.get('num_questions', 5))
         difficulty = data.get('difficulty', 'medium')
         question_type = data.get('type', 'multiple-choice')
 
         # Validation
-        if not content or len(content.strip()) < 50:
+        if not topic or len(topic.strip()) < 10:
             return jsonify({
                 "success": False,
-                "error": "Content is too short. Please provide at least 50 characters."
+                "error": "Topic is too short"
             }), 400
 
         if num_questions < 1 or num_questions > 50:
@@ -176,61 +275,24 @@ def generate_questions():
                 "error": "Number of questions must be between 1 and 50"
             }), 400
 
-        # Limit content length to avoid token limits
-        max_content_length = 4000
-        if len(content) > max_content_length:
-            content = content[:max_content_length] + "\n...(content truncated)"
-
         # Build format example based on question type
         if question_type == 'multiple-choice':
-            format_example = '''[
-  {
-    "question": "What is the primary function of photosynthesis?",
-    "options": ["Produce oxygen and glucose", "Absorb water only", "Release carbon dioxide", "Create soil nutrients"],
-    "correct_answer": "Produce oxygen and glucose",
-    "explanation": "Photosynthesis converts light energy into chemical energy, producing oxygen and glucose."
-  }
-]'''
+            format_example = '''[{"question": "Q?", "options": ["A", "B", "C", "D"], "correct_answer": "A", "explanation": "Why"}]'''
         elif question_type == 'true-false':
-            format_example = '''[
-  {
-    "question": "Photosynthesis requires sunlight to occur",
-    "options": ["True", "False"],
-    "correct_answer": "True",
-    "explanation": "Photosynthesis is a light-dependent process that requires sunlight."
-  }
-]'''
+            format_example = '''[{"question": "Statement?", "options": ["True", "False"], "correct_answer": "True", "explanation": "Why"}]'''
         else:  # short-answer
-            format_example = '''[
-  {
-    "question": "Explain the main purpose of photosynthesis in plants",
-    "options": [],
-    "correct_answer": "To convert light energy into chemical energy stored in glucose",
-    "explanation": "Acceptable answers should mention energy conversion and glucose production."
-  }
-]'''
+            format_example = '''[{"question": "Q?", "options": [], "correct_answer": "Answer", "explanation": "Explanation"}]'''
 
-        prompt = f"""You are an expert exam question generator. Create exactly {num_questions} {difficulty} difficulty {question_type} questions based on the following content.
+        # Ultra-simplified prompt to reduce tokens
+        prompt = f"""Generate {num_questions} {difficulty} {question_type} questions about: {topic}
 
-CONTENT:
-{content}
-
-REQUIREMENTS:
-- Generate exactly {num_questions} questions
-- Difficulty level: {difficulty}
-- Question type: {question_type}
-- Questions should test comprehension and understanding, not just memorization
-- Provide clear, unambiguous correct answers
-- Include brief explanations for each answer
-- For multiple choice, provide 4 distinct options
-
-IMPORTANT: Return ONLY a valid JSON array with no additional text, markdown, or formatting:
+Return ONLY valid JSON array, no markdown:
 {format_example}"""
 
         messages = [
             {
                 "role": "system",
-                "content": "You are an expert educational content creator. You must respond with valid JSON only, no markdown formatting or additional text."
+                "content": "Expert exam creator. JSON only."
             },
             {
                 "role": "user",
@@ -238,18 +300,35 @@ IMPORTANT: Return ONLY a valid JSON array with no additional text, markdown, or 
             }
         ]
 
-        print(f"Calling AI model for {num_questions} questions...")
+        print(f"Generating {num_questions} questions from topic...")
 
-        # Call AI model
-        response_text = call_ai_model(messages, temperature=0.7, max_tokens=2500)
+        # Ultra-reduced max_tokens to work within credit limits
+        max_tokens_needed = min(800, (num_questions * 150))  # ~150 tokens per question
+
+        response_text = None
+        try:
+            response_text = call_ai_model(messages, temperature=0.7, max_tokens=max_tokens_needed)
+        except Exception as ai_error:
+            # If we hit credit limits, try with even fewer tokens
+            if "402" in str(ai_error) or "credits" in str(ai_error).lower():
+                print("Hit credit limit, trying with reduced tokens...")
+                max_tokens_needed = min(500, (num_questions * 100))
+                try:
+                    response_text = call_ai_model(messages, temperature=0.7, max_tokens=max_tokens_needed)
+                except Exception as e:
+                    raise Exception(f"Failed even with reduced tokens: {str(e)}")
+            else:
+                raise ai_error
+
+        if not response_text:
+            raise Exception("No response received from AI model")
 
         print(f"AI Response received: {len(response_text)} characters")
 
-        # Clean response - remove markdown code blocks if present
+        # Clean response
         response_text = response_text.strip()
 
         if '```' in response_text:
-            # Extract JSON from markdown code blocks
             parts = response_text.split('```')
             for part in parts:
                 part = part.strip()
@@ -272,31 +351,19 @@ IMPORTANT: Return ONLY a valid JSON array with no additional text, markdown, or 
                 "details": str(e)
             }), 500
 
-        # Validate response structure
-        if not isinstance(questions, list):
+        # Validate response
+        if not isinstance(questions, list) or len(questions) == 0:
             return jsonify({
                 "success": False,
-                "error": "Invalid response format from AI"
+                "error": "Invalid response from AI"
             }), 500
 
-        if len(questions) == 0:
-            return jsonify({
-                "success": False,
-                "error": "AI did not generate any questions"
-            }), 500
-
-        # Validate each question has required fields
+        # Validate each question
         for i, q in enumerate(questions):
-            if not isinstance(q, dict):
+            if not isinstance(q, dict) or 'question' not in q or 'correct_answer' not in q:
                 return jsonify({
                     "success": False,
-                    "error": f"Question {i+1} is not properly formatted"
-                }), 500
-
-            if 'question' not in q or 'correct_answer' not in q:
-                return jsonify({
-                    "success": False,
-                    "error": f"Question {i+1} is missing required fields"
+                    "error": f"Question {i+1} is invalid"
                 }), 500
 
         print(f"Successfully generated {len(questions)} questions")
@@ -327,24 +394,21 @@ def evaluate_difficulty():
         if not question:
             return jsonify({"success": False, "error": "No question provided"}), 400
 
-        prompt = f"""Analyze this exam question and rate its difficulty:
+        prompt = f"""Rate this question's difficulty (1-10):
 
 Question: {question}
 Options: {', '.join(options) if options else 'N/A'}
 
-Provide a difficulty rating from 1-10 (where 1 is easiest, 10 is hardest) and categorize it.
-
-Return ONLY this JSON format:
+Return ONLY JSON:
 {{
   "score": 7,
   "level": "medium",
-  "reasoning": "Brief explanation of why this difficulty rating"
+  "reasoning": "Brief explanation"
 }}"""
 
         messages = [{"role": "user", "content": prompt}]
-        response_text = call_ai_model(messages, temperature=0.3, max_tokens=300)
+        response_text = call_ai_model(messages, temperature=0.3, max_tokens=200)
 
-        # Clean and parse
         response_text = response_text.strip()
         if '```' in response_text:
             response_text = response_text.split('```')[1].replace('json', '').strip()
@@ -374,23 +438,20 @@ def improve_question():
         if not question:
             return jsonify({"success": False, "error": "No question provided"}), 400
 
-        prompt = f"""Improve this exam question to make it clearer and more effective:
+        prompt = f"""Improve this question:
 
-Original Question: {question}
+{question}
 
-Provide an improved version and explain what was changed.
-
-Return ONLY this JSON format:
+Return ONLY JSON:
 {{
-  "improved_question": "The improved version of the question",
-  "changes": "What was improved and why",
-  "tips": "General tips for writing better questions"
+  "improved_question": "Improved version",
+  "changes": "What changed",
+  "tips": "Writing tips"
 }}"""
 
         messages = [{"role": "user", "content": prompt}]
-        response_text = call_ai_model(messages, temperature=0.7, max_tokens=500)
+        response_text = call_ai_model(messages, temperature=0.7, max_tokens=400)
 
-        # Clean and parse
         response_text = response_text.strip()
         if '```' in response_text:
             response_text = response_text.split('```')[1].replace('json', '').strip()
@@ -405,22 +466,19 @@ Return ONLY this JSON format:
     except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Improvement suggestion failed",
+            "error": "Improvement failed",
             "details": str(e)
         }), 500
 
 
-# Run the Flask app
 if __name__ == "__main__":
-    # Validate configuration on startup
     print("\n" + "="*60)
-    print("🚀 ExamBits AI Service Starting...")
+    print("🚀 ExamBits AI Service Starting (Topic-Based Generation)...")
     print("="*60)
 
     if not OPENROUTER_API_KEY:
         print("❌ ERROR: OPENROUTER_API_KEY not found in .env file")
-        print("📝 Please create server/.env and add your OpenRouter API key:")
-        print("   OPENROUTER_API_KEY=sk-or-v1-your-new-key-here")
+        print("📝 Please create server/.env and add your OpenRouter API key")
         print("="*60)
         exit(1)
 
@@ -428,6 +486,7 @@ if __name__ == "__main__":
     print(f"✅ Model: {AI_MODEL}")
     print(f"✅ API Key: {'*' * 40}{OPENROUTER_API_KEY[-8:]}")
     print(f"✅ Server: http://localhost:5000")
+    print(f"✅ Method: Topic Extraction (Token Optimized)")
     print("="*60 + "\n")
 
     app.run(host='0.0.0.0', port=5000, debug=True)
