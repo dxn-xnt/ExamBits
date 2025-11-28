@@ -7,10 +7,12 @@ import {
     FieldHeader,
     FieldSet, FieldFooter, FieldLegend,
 } from "@/components/ui/field"
-import {X} from "lucide-react";
-import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
+import { X } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import FileUpload from "@/components/file-upload";
 import ToggleRadioGroup from "@/components/ui/radio-group";
+import { router } from '@inertiajs/react';
+import { useState } from 'react';
 
 type Option = {
     id: string;
@@ -19,34 +21,118 @@ type Option = {
 };
 
 export default function GenerateExamForm() {
-    const options: Option[] = [
-        { id: "hard", label: "Hard" , color: "blue" },
-        { id: "moderate", label: "Moderate",  color: "green"},
-        { id: "easy", label: "Easy",  color: "red"},
+    const [difficulty, setDifficulty] = useState<string>('moderate');
+    const [questionTypes, setQuestionTypes] = useState<string[]>(['multipleChoice']);
+    const [file, setFile] = useState<File | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string>('');
+
+    const difficultyOptions: Option[] = [
+        { id: "easy", label: "Easy", color: "green" },
+        { id: "moderate", label: "Moderate", color: "yellow" },
+        { id: "hard", label: "Hard", color: "red" },
     ];
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!file) {
+            setError('Please upload a PDF file');
+            return;
+        }
+
+        if (questionTypes.length === 0) {
+            setError('Please select at least one question type');
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('difficulty', difficulty);
+        formData.append('num_questions', '10'); // You can make this configurable
+
+        // Send question types as array
+        questionTypes.forEach((type, index) => {
+            formData.append(question_types[${index}], type);
+        });
+
+        try {
+            router.post('/exam-generator/generate', formData, {
+                forceFormData: true,
+                onSuccess: () => {
+                    console.log('Exam generated successfully!');
+                },
+                onError: (errors: any) => {
+                    console.error('Generation failed:', errors);
+                    setError(errors.message || 'Failed to generate exam');
+                },
+                onFinish: () => {
+                    setIsSubmitting(false);
+                }
+            });
+        } catch (err) {
+            setError('An error occurred while generating the exam');
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleClose = () => {
+        // Go back or redirect to exam generator index
+        window.history.back();
+    };
+
     return (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card w-full max-w-md h-fit border-2 border-card-foreground rounded-3xl shadow-lg z-10">
-            <form>
+            <form onSubmit={handleSubmit}>
                 <FieldGroup>
                     <FieldSet>
                         <FieldHeader>
                             <FieldLegend>Generate Exam</FieldLegend>
-                            <Button variant="ghost" size="sm">
-                                <X ></X>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                type="button"
+                                onClick={handleClose}
+                            >
+                                <X />
                             </Button>
                         </FieldHeader>
                         <FieldContent>
+                            {error && (
+                                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                                    {error}
+                                </div>
+                            )}
+
                             <Field>
-                                <FieldLabel htmlFor="checkout-7j9-card-name-43j">
+                                <FieldLabel htmlFor="difficulty">
                                     Difficulty
                                 </FieldLabel>
-                                <ToggleRadioGroup options={options}></ToggleRadioGroup>
+                                <ToggleRadioGroup
+                                    options={difficultyOptions}
+                                    value={difficulty}
+                                    onValueChange={setDifficulty}
+                                />
                             </Field>
+
                             <Field>
-                                <FieldLabel htmlFor="checkout-7j9-card-number-uw1">
-                                    Question type
+                                <FieldLabel htmlFor="question-types">
+                                    Question Types
                                 </FieldLabel>
-                                <ToggleGroup type="multiple" variant="outline">
+                                <ToggleGroup
+                                    type="multiple"
+                                    variant="outline"
+                                    value={questionTypes}
+                                    onValueChange={(value) => {
+                                        // Ensure at least one type is selected
+                                        if (value.length > 0) {
+                                            setQuestionTypes(value);
+                                        }
+                                    }}
+                                >
                                     <ToggleGroupItem value="multipleChoice" color="blue">
                                         Multiple Choice
                                     </ToggleGroupItem>
@@ -57,20 +143,36 @@ export default function GenerateExamForm() {
                                         Identification
                                     </ToggleGroupItem>
                                 </ToggleGroup>
+                                <FieldDescription className="mt-2 text-xs text-gray-500">
+                                    Select one or more question types
+                                </FieldDescription>
                             </Field>
+
                             <Field>
-                                <FieldLabel htmlFor="checkout-7j9-card-number-uw1">
-                                    Upload material
+                                <FieldLabel htmlFor="file-upload">
+                                    Upload Material (PDF)
                                 </FieldLabel>
-                                <FileUpload></FileUpload>
+                                <FileUpload
+                                    onFileSelect={setFile}
+                                    accept=".pdf"
+                                    maxSize={10}
+                                    value={file}
+                                />
                             </Field>
                         </FieldContent>
                     </FieldSet>
                     <FieldFooter>
-                        <Button variant="fit" size="xs" type="submit">Generate</Button>
+                        <Button
+                            variant="fit"
+                            size="xs"
+                            type="submit"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Generating...' : 'Generate'}
+                        </Button>
                     </FieldFooter>
                 </FieldGroup>
             </form>
         </div>
-    )
+    );
 }

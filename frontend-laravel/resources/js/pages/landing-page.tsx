@@ -54,7 +54,7 @@ export default function LandingPage() {
                     className="my-6"
                     onClick={() => setShowForm((prev) => !prev)}
                 >
-                    {showForm ? "Hide Form" : "Generate exam"}
+                   Generate exam
                 </Button>
 
                 {showForm && <GenerateExamForm />
