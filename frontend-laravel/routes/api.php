@@ -1,23 +1,38 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\ExamController;
 use App\Http\Controllers\API\AIController;
 
-// Exam management
-Route::get('/exams', [ExamController::class, 'index']);
-Route::post('/exams', [ExamController::class, 'store']);
-Route::get('/exams/{id}', [ExamController::class, 'show']);
-Route::delete('/exams/{id}', [ExamController::class, 'destroy']);
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
 
-// Exam sharing & taking (public routes)
-Route::get('/exam/{shareCode}', [ExamController::class, 'getByShareCode']);
-Route::post('/exam/{shareCode}/submit', [ExamController::class, 'submitAttempt']);
-Route::get('/exam/{shareCode}/results/{attemptId}', [ExamController::class, 'getResults']);
+// AI Quiz Generation Routes
+Route::prefix('ai')->group(function () {
+    // Upload PDF and generate questions (now uses topic-based approach)
+    Route::post('/generate-from-pdf', [AIController::class, 'uploadPdfAndGenerate']);
 
-// AI endpoints
-Route::post('/ai/upload-pdf', [AIController::class, 'uploadPdfAndGenerate']);
-Route::post('/ai/generate-text', [AIController::class, 'generateFromText']);
-Route::post('/ai/evaluate', [AIController::class, 'evaluateDifficulty']);
-Route::post('/ai/improve', [AIController::class, 'improveQuestion']);
+    // Generate from text content (now uses topic-based approach)
+    Route::post('/generate-from-text', [AIController::class, 'generateFromText']);
+
+    // NEW: Analyze and extract main topic from content
+    Route::post('/analyze-topic', [AIController::class, 'analyzeTopic']);
+
+    // Evaluate question difficulty
+    Route::post('/evaluate-difficulty', [AIController::class, 'evaluateDifficulty']);
+
+    // Improve question quality
+    Route::post('/improve-question', [AIController::class, 'improveQuestion']);
+
+    // Health check
+    Route::get('/health', function () {
+        return response()->json([
+            'status' => 'ok',
+            'flask_url' => env('FLASK_AI_URL', 'http://localhost:5000'),
+            'method' => 'topic-based-generation',
+            'token_optimized' => true
+        ]);
+    });
+});

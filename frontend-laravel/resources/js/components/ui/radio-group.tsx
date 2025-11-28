@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 
 type Option = {
     id: string;
@@ -7,9 +6,10 @@ type Option = {
     color?: "blue" | "green" | "red" | "violet" | "yellow";
 };
 
-
 interface ToggleRadioGroupProps {
     options: Option[];
+    value?: string;
+    onValueChange?: (value: string) => void;
 }
 
 interface RadioButtonProps {
@@ -21,15 +21,14 @@ interface RadioButtonProps {
     isSelected: boolean;
     onSelect: (id: string) => void;
     className?: string;
-    href?: string;
 }
 
-function RadioButton({ option, isSelected, onSelect, className  }: RadioButtonProps) {
+function RadioButton({ option, isSelected, onSelect, className }: RadioButtonProps) {
     const baseClasses =
         "px-4 py-1.5 text-md rounded-md border-2 border-card-foreground text-foreground transition-colors";
 
     const colorClass = option.color === "blue"
-        ? "bg-accent-blue hover:bg-accent-blue "
+        ? "bg-accent-blue hover:bg-accent-blue"
         : option.color === "green"
             ? "bg-accent-green hover:bg-accent-green"
             : option.color === "red"
@@ -40,8 +39,7 @@ function RadioButton({ option, isSelected, onSelect, className  }: RadioButtonPr
                         ? "bg-accent-yellow hover:bg-accent-yellow"
                         : "";
 
-    const unselectedClasses =
-        "bg-transparent";
+    const unselectedClasses = "bg-transparent hover:bg-gray-100";
 
     return (
         <button
@@ -58,8 +56,26 @@ function RadioButton({ option, isSelected, onSelect, className  }: RadioButtonPr
     );
 }
 
-export default function ToggleRadioGroup({ options }: ToggleRadioGroupProps) {
-    const [selected, setSelected] = useState<string>(options[0].id);
+export default function ToggleRadioGroup({
+                                             options,
+                                             value,
+                                             onValueChange
+                                         }: ToggleRadioGroupProps) {
+    const [selected, setSelected] = useState<string>(value || options[0]?.id || '');
+
+    // Sync with external value prop
+    useEffect(() => {
+        if (value !== undefined) {
+            setSelected(value);
+        }
+    }, [value]);
+
+    const handleSelect = (id: string) => {
+        setSelected(id);
+        if (onValueChange) {
+            onValueChange(id);
+        }
+    };
 
     return (
         <div className="flex gap-2">
@@ -68,9 +84,11 @@ export default function ToggleRadioGroup({ options }: ToggleRadioGroupProps) {
                     key={option.id}
                     option={option}
                     isSelected={selected === option.id}
-                    onSelect={setSelected}              />
+                    onSelect={handleSelect}
+                />
             ))}
         </div>
     );
 }
+
 export { RadioButton, ToggleRadioGroup };
