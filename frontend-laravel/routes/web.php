@@ -3,17 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\QuestionController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
 // Home / Landing Page - Shows all exams
-Route::get('/', function () {
-    return Inertia::render('landing-page', []);
-})->name('home');
+Route::get('/', [ExamController::class, 'index'])
+    ->name('home');
 
 // Exam Generator Routes
 Route::prefix('exam-generator')->group(function () {
@@ -27,11 +22,22 @@ Route::prefix('exam-generator')->group(function () {
     Route::post('/generate', [ExamController::class, 'generate'])
         ->name('exam.generate-exam');
 
-    // View generated exam
-    Route::get('/view/{id}', [ExamController::class, 'view'])
+    // View generated exam - NOW USES QuestionController
+    Route::get('/view/{id}', [QuestionController::class, 'index'])
         ->name('exam.view');
 
     // Export generated exam (PDF / Word / etc.)
     Route::get('/export/{examId}', [ExamController::class, 'export'])
         ->name('exam.export');
+});
+
+// Question Management Routes
+Route::prefix('questions')->group(function () {
+    // Update a question
+    Route::put('/{id}', [QuestionController::class, 'update'])
+        ->name('question.update');
+
+    // Delete a question
+    Route::delete('/{id}', [QuestionController::class, 'destroy'])
+        ->name('question.destroy');
 });

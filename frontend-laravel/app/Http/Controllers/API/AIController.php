@@ -22,7 +22,7 @@ class AIController extends Controller
     public function uploadPdfAndGenerate(Request $request)
     {
         // Increase PHP execution time for AI processing
-        set_time_limit(180); // 3 minutes
+        set_time_limit(180);
 
         $request->validate([
             'file' => 'required|mimes:pdf|max:10240',

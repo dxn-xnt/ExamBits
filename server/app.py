@@ -80,7 +80,6 @@ def extract_main_topic(text, max_length=1000):
     sample_text = re.sub(r'\s+', ' ', sample_text).strip()
 
     # Extract keywords and generate a simple topic description
-    # This is a basic approach - you could enhance with NLP libraries
     lines = sample_text.split('\n')
     # Get first few meaningful lines (likely titles/headers)
     meaningful_lines = [line.strip() for line in lines if len(line.strip()) > 20][:5]
@@ -207,7 +206,7 @@ def extract_pdf():
 
 @app.route("/api/ai/analyze-topic", methods=["POST"])
 def analyze_topic():
-    """Extract main topic from content (NEW ENDPOINT)"""
+    """Extract main topic from content"""
     try:
         data = request.json
 
@@ -249,7 +248,7 @@ def analyze_topic():
 
 @app.route("/api/ai/generate-questions", methods=["POST"])
 def generate_questions():
-    """Generate exam questions from TOPIC (not full content)"""
+    """Generate exam questions from TOPIC (without explanations)"""
     try:
         data = request.json
 
@@ -275,24 +274,29 @@ def generate_questions():
                 "error": "Number of questions must be between 1 and 50"
             }), 400
 
-        # Build format example based on question type
+        # Build format example and specific instructions based on question type
         if question_type == 'multiple-choice':
-            format_example = '''[{"question": "Q?", "options": ["A", "B", "C", "D"], "correct_answer": "A", "explanation": "Why"}]'''
+            format_example = '''[{"question": "Question text?", "options": ["A", "B", "C", "D"], "correct_answer": "A"}]'''
+            type_instruction = "MULTIPLE CHOICE with 4 options (A, B, C, D)"
         elif question_type == 'true-false':
-            format_example = '''[{"question": "Statement?", "options": ["True", "False"], "correct_answer": "True", "explanation": "Why"}]'''
-        else:  # short-answer
-            format_example = '''[{"question": "Q?", "options": [], "correct_answer": "Answer", "explanation": "Explanation"}]'''
+            format_example = '''[{"question": "Statement text?", "options": ["True", "False"], "correct_answer": "True"}]'''
+            type_instruction = "TRUE/FALSE with exactly 2 options: ['True', 'False']"
+        else:  # identification
+            format_example = '''[{"question": "Question text?", "options": [], "correct_answer": "Short answer"}]'''
+            type_instruction = "IDENTIFICATION (fill-in-the-blank) with EMPTY options array []"
 
-        # Ultra-simplified prompt to reduce tokens
-        prompt = f"""Generate {num_questions} {difficulty} {question_type} questions about: {topic}
+        # Ultra-simplified prompt with STRICT type enforcement
+        prompt = f"""Generate {num_questions} {difficulty} {type_instruction} question(s) about: {topic}
 
-Return ONLY valid JSON array, no markdown:
-{format_example}"""
+CRITICAL: Question type MUST be {question_type}
+{format_example}
+
+Return ONLY valid JSON array, no markdown:"""
 
         messages = [
             {
                 "role": "system",
-                "content": "Expert exam creator. JSON only."
+                "content": f"You are an exam question generator. Generate ONLY {question_type} questions. Return JSON only."
             },
             {
                 "role": "user",
@@ -303,7 +307,7 @@ Return ONLY valid JSON array, no markdown:
         print(f"Generating {num_questions} questions from topic...")
 
         # Ultra-reduced max_tokens to work within credit limits
-        max_tokens_needed = min(800, (num_questions * 150))  # ~150 tokens per question
+        max_tokens_needed = min(800, (num_questions * 150))
 
         response_text = None
         try:
@@ -358,20 +362,60 @@ Return ONLY valid JSON array, no markdown:
                 "error": "Invalid response from AI"
             }), 500
 
-        # Validate each question
+        # Validate and clean each question (remove explanation if present)
+        cleaned_questions = []
         for i, q in enumerate(questions):
             if not isinstance(q, dict) or 'question' not in q or 'correct_answer' not in q:
-                return jsonify({
-                    "success": False,
-                    "error": f"Question {i+1} is invalid"
-                }), 500
+                print(f"Question {i+1} is invalid - missing required fields")
+                continue
 
-        print(f"Successfully generated {len(questions)} questions")
+            # Validate question type matches request
+            options = q.get('options', [])
+            is_valid = False
+
+            if question_type == 'identification':
+                # Identification must have empty or no options
+                if not options or len(options) == 0:
+                    is_valid = True
+                else:
+                    print(f"Skipping question {i+1}: Expected identification (no options) but got {len(options)} options")
+            elif question_type == 'true-false':
+                # True/false must have exactly 2 options
+                if len(options) == 2:
+                    is_valid = True
+                else:
+                    print(f"Skipping question {i+1}: Expected true-false (2 options) but got {len(options)} options")
+            elif question_type == 'multiple-choice':
+                # Multiple choice must have 3+ options
+                if len(options) >= 3:
+                    is_valid = True
+                else:
+                    print(f"Skipping question {i+1}: Expected multiple-choice (3+ options) but got {len(options)} options")
+
+            if not is_valid:
+                continue
+
+            # Clean and add the question
+            cleaned_q = {
+                'question': q['question'],
+                'options': options,
+                'correct_answer': q['correct_answer'],
+                'type': question_type
+            }
+            cleaned_questions.append(cleaned_q)
+
+        if len(cleaned_questions) == 0:
+            return jsonify({
+                "success": False,
+                "error": f"AI generated wrong question type. Expected {question_type} but got different format."
+            }), 500
+
+        print(f"Successfully generated {len(cleaned_questions)} questions")
 
         return jsonify({
             "success": True,
-            "questions": questions,
-            "count": len(questions)
+            "questions": cleaned_questions,
+            "count": len(cleaned_questions)
         })
 
     except Exception as e:

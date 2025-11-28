@@ -2,14 +2,92 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\ExamController::index
  * @see app/Http/Controllers/ExamController.php:21
- * @route '/exam-generator'
+ * @route '/'
  */
-export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+const index980bb49ee7ae63891f1d891d2fbcf1c9 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index980bb49ee7ae63891f1d891d2fbcf1c9.url(options),
     method: 'get',
 })
 
-index.definition = {
+index980bb49ee7ae63891f1d891d2fbcf1c9.definition = {
+    methods: ["get","head"],
+    url: '/',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\ExamController::index
+ * @see app/Http/Controllers/ExamController.php:21
+ * @route '/'
+ */
+index980bb49ee7ae63891f1d891d2fbcf1c9.url = (options?: RouteQueryOptions) => {
+    return index980bb49ee7ae63891f1d891d2fbcf1c9.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ExamController::index
+ * @see app/Http/Controllers/ExamController.php:21
+ * @route '/'
+ */
+index980bb49ee7ae63891f1d891d2fbcf1c9.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index980bb49ee7ae63891f1d891d2fbcf1c9.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\ExamController::index
+ * @see app/Http/Controllers/ExamController.php:21
+ * @route '/'
+ */
+index980bb49ee7ae63891f1d891d2fbcf1c9.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index980bb49ee7ae63891f1d891d2fbcf1c9.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\ExamController::index
+ * @see app/Http/Controllers/ExamController.php:21
+ * @route '/'
+ */
+    const index980bb49ee7ae63891f1d891d2fbcf1c9Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: index980bb49ee7ae63891f1d891d2fbcf1c9.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\ExamController::index
+ * @see app/Http/Controllers/ExamController.php:21
+ * @route '/'
+ */
+        index980bb49ee7ae63891f1d891d2fbcf1c9Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index980bb49ee7ae63891f1d891d2fbcf1c9.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\ExamController::index
+ * @see app/Http/Controllers/ExamController.php:21
+ * @route '/'
+ */
+        index980bb49ee7ae63891f1d891d2fbcf1c9Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index980bb49ee7ae63891f1d891d2fbcf1c9.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    index980bb49ee7ae63891f1d891d2fbcf1c9.form = index980bb49ee7ae63891f1d891d2fbcf1c9Form
+    /**
+* @see \App\Http\Controllers\ExamController::index
+ * @see app/Http/Controllers/ExamController.php:21
+ * @route '/exam-generator'
+ */
+const index6baac021d6feda071f12a75cda21e3e4 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index6baac021d6feda071f12a75cda21e3e4.url(options),
+    method: 'get',
+})
+
+index6baac021d6feda071f12a75cda21e3e4.definition = {
     methods: ["get","head"],
     url: '/exam-generator',
 } satisfies RouteDefinition<["get","head"]>
@@ -19,8 +97,8 @@ index.definition = {
  * @see app/Http/Controllers/ExamController.php:21
  * @route '/exam-generator'
  */
-index.url = (options?: RouteQueryOptions) => {
-    return index.definition.url + queryParams(options)
+index6baac021d6feda071f12a75cda21e3e4.url = (options?: RouteQueryOptions) => {
+    return index6baac021d6feda071f12a75cda21e3e4.definition.url + queryParams(options)
 }
 
 /**
@@ -28,8 +106,8 @@ index.url = (options?: RouteQueryOptions) => {
  * @see app/Http/Controllers/ExamController.php:21
  * @route '/exam-generator'
  */
-index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+index6baac021d6feda071f12a75cda21e3e4.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index6baac021d6feda071f12a75cda21e3e4.url(options),
     method: 'get',
 })
 /**
@@ -37,8 +115,8 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
  * @see app/Http/Controllers/ExamController.php:21
  * @route '/exam-generator'
  */
-index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: index.url(options),
+index6baac021d6feda071f12a75cda21e3e4.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index6baac021d6feda071f12a75cda21e3e4.url(options),
     method: 'head',
 })
 
@@ -47,8 +125,8 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/ExamController.php:21
  * @route '/exam-generator'
  */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
+    const index6baac021d6feda071f12a75cda21e3e4Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: index6baac021d6feda071f12a75cda21e3e4.url(options),
         method: 'get',
     })
 
@@ -57,8 +135,8 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/ExamController.php:21
  * @route '/exam-generator'
  */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
+        index6baac021d6feda071f12a75cda21e3e4Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index6baac021d6feda071f12a75cda21e3e4.url(options),
             method: 'get',
         })
             /**
@@ -66,8 +144,8 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/ExamController.php:21
  * @route '/exam-generator'
  */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
+        index6baac021d6feda071f12a75cda21e3e4Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index6baac021d6feda071f12a75cda21e3e4.url({
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
                             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -76,7 +154,13 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
     
-    index.form = indexForm
+    index6baac021d6feda071f12a75cda21e3e4.form = index6baac021d6feda071f12a75cda21e3e4Form
+
+export const index = {
+    '/': index980bb49ee7ae63891f1d891d2fbcf1c9,
+    '/exam-generator': index6baac021d6feda071f12a75cda21e3e4,
+}
+
 /**
 * @see \App\Http\Controllers\ExamController::generate
  * @see app/Http/Controllers/ExamController.php:30
@@ -217,105 +301,8 @@ export const generate = {
 }
 
 /**
-* @see \App\Http\Controllers\ExamController::view
- * @see app/Http/Controllers/ExamController.php:196
- * @route '/exam-generator/view/{id}'
- */
-export const view = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: view.url(args, options),
-    method: 'get',
-})
-
-view.definition = {
-    methods: ["get","head"],
-    url: '/exam-generator/view/{id}',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\ExamController::view
- * @see app/Http/Controllers/ExamController.php:196
- * @route '/exam-generator/view/{id}'
- */
-view.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { id: args }
-    }
-
-    
-    if (Array.isArray(args)) {
-        args = {
-                    id: args[0],
-                }
-    }
-
-    args = applyUrlDefaults(args)
-
-    const parsedArgs = {
-                        id: args.id,
-                }
-
-    return view.definition.url
-            .replace('{id}', parsedArgs.id.toString())
-            .replace(/\/+$/, '') + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\ExamController::view
- * @see app/Http/Controllers/ExamController.php:196
- * @route '/exam-generator/view/{id}'
- */
-view.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: view.url(args, options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\ExamController::view
- * @see app/Http/Controllers/ExamController.php:196
- * @route '/exam-generator/view/{id}'
- */
-view.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: view.url(args, options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\ExamController::view
- * @see app/Http/Controllers/ExamController.php:196
- * @route '/exam-generator/view/{id}'
- */
-    const viewForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: view.url(args, options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\ExamController::view
- * @see app/Http/Controllers/ExamController.php:196
- * @route '/exam-generator/view/{id}'
- */
-        viewForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: view.url(args, options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\ExamController::view
- * @see app/Http/Controllers/ExamController.php:196
- * @route '/exam-generator/view/{id}'
- */
-        viewForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: view.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    view.form = viewForm
-/**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:242
+ * @see app/Http/Controllers/ExamController.php:257
  * @route '/exam-generator/export/{examId}'
  */
 export const exportMethod = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -330,7 +317,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:242
+ * @see app/Http/Controllers/ExamController.php:257
  * @route '/exam-generator/export/{examId}'
  */
 exportMethod.url = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -358,7 +345,7 @@ exportMethod.url = (args: { examId: string | number } | [examId: string | number
 
 /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:242
+ * @see app/Http/Controllers/ExamController.php:257
  * @route '/exam-generator/export/{examId}'
  */
 exportMethod.get = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -367,7 +354,7 @@ exportMethod.get = (args: { examId: string | number } | [examId: string | number
 })
 /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:242
+ * @see app/Http/Controllers/ExamController.php:257
  * @route '/exam-generator/export/{examId}'
  */
 exportMethod.head = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -377,7 +364,7 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
 
     /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:242
+ * @see app/Http/Controllers/ExamController.php:257
  * @route '/exam-generator/export/{examId}'
  */
     const exportMethodForm = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -387,7 +374,7 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
 
             /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:242
+ * @see app/Http/Controllers/ExamController.php:257
  * @route '/exam-generator/export/{examId}'
  */
         exportMethodForm.get = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -396,7 +383,7 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
         })
             /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:242
+ * @see app/Http/Controllers/ExamController.php:257
  * @route '/exam-generator/export/{examId}'
  */
         exportMethodForm.head = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -410,6 +397,6 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
         })
     
     exportMethod.form = exportMethodForm
-const ExamController = { index, generate, view, exportMethod, export: exportMethod }
+const ExamController = { index, generate, exportMethod, export: exportMethod }
 
 export default ExamController
