@@ -62,8 +62,6 @@ function generateOptions(data: QuestionData) {
         }));
 }
 
-
-
 export default function ExamView({ exam, questions }: Props) {
     const questionData: QuestionData = {
         multiple: [],
