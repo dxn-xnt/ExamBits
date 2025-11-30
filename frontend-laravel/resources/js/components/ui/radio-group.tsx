@@ -61,9 +61,13 @@ export default function ToggleRadioGroup({
                                              value,
                                              onValueChange
                                          }: ToggleRadioGroupProps) {
-    const [selected, setSelected] = useState<string>(value || options[0]?.id || '');
 
-    // Sync with external value prop
+    // Default selected = first option
+    const getInitial = () => value || options[0]?.id || "";
+
+    const [selected, setSelected] = useState<string>(getInitial());
+
+    // sync with external changes
     useEffect(() => {
         if (value !== undefined) {
             setSelected(value);
@@ -72,9 +76,7 @@ export default function ToggleRadioGroup({
 
     const handleSelect = (id: string) => {
         setSelected(id);
-        if (onValueChange) {
-            onValueChange(id);
-        }
+        onValueChange?.(id);
     };
 
     return (
