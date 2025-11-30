@@ -4271,7 +4271,6 @@ false Zulu
     <schema id="274" parent="8" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>14304</IntrospectionStateNumber>
       <LastIntrospectionLocalTimestamp>2025-11-28.05:17:31</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>532</StateNumber>

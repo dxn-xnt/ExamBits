@@ -4,31 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a2eb89-80fd-467c-b17a-681577468567" name="Changes" comment="try">
-      <change afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Middleware/SetAITimeouts.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend-laravel/config/ai.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/API/AIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/API/AIController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/API/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/API/ExamController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/ExamController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Models/Question.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Models/Question.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/bootstrap/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/database/migrations/2025_11_26_061926_create_questions_table.php" beforeDir="false" />
+    <list default="true" id="43a2eb89-80fd-467c-b17a-681577468567" name="Changes" comment="Merge remote-tracking branch 'origin/main' into dan-programs&#10;&#10;# Conflicts:&#10;#&#9;frontend-laravel/resources/js/pages/form/generate-exam-form.tsx">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/02bcf8c7-c64d-4e5f-b562-0401b6046601.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/02bcf8c7-c64d-4e5f-b562-0401b6046601.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/AIController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/AIController.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/file-upload.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/file-upload.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/radio-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/radio-group.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/form/generate-exam-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/form/generate-exam-form.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/routes/web.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/.env" beforeDir="false" afterPath="$PROJECT_DIR$/server/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +43,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/dxn-xnt/ExamBits.git&quot;,
-    &quot;accountId&quot;: &quot;50dbb63c-1b3b-436b-83ea-d900a438950d&quot;
+    &quot;accountId&quot;: &quot;e60b6101-7657-456e-9b43-106cf73de021&quot;
   }
 }</component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="$PROJECT_DIR$/../../../../xampp/php/php.exe">
@@ -193,35 +185,40 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="363B26rx8PjNRwT7l3hp2Zskt0U" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "roy-dev",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Users\\Roy Adrian Rondina\\PhpstormProjects\\ExamBits\\frontend-laravel\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dan-programs&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\Dan\\PycharmProjects\\ExamBits\\frontend-laravel\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PS-251.23774.466" />
-        <option value="bundled-php-predefined-a98d8de5180a-aaeaa8632555-com.jetbrains.php.sharedIndexes-PS-251.23774.466" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-PY-252.27397.106" />
+        <option value="bundled-python-sdk-4e2b1448bda8-9a97661f3031-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.27397.106" />
       </set>
     </attachedChunks>
   </component>
@@ -235,6 +232,8 @@
       <workItem from="1764225171935" duration="6877000" />
       <workItem from="1764256658091" duration="620000" />
       <workItem from="1764304719706" duration="2936000" />
+      <workItem from="1764346977163" duration="713000" />
+      <workItem from="1764435157729" duration="767000" />
     </task>
     <servers />
   </component>
