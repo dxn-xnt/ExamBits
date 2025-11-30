@@ -22,3 +22,14 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+# Python venv
+.venv/
+server/.venv/
+
+# IDE files
+.idea/
+
+# Node / build junk just in case
+node_modules/
+dist/
+build/
