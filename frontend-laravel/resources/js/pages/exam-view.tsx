@@ -1,12 +1,13 @@
 import { useState } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X } from "lucide-react";
 import { RadioButton } from "@/components/ui/radio-group";
 import { MultipleChoice } from "@/pages/question-layout/multiple-choice";
 import { TrueOrFalse } from "@/pages/question-layout/true-or-false";
 import { Identification } from "@/pages/question-layout/identification";
 import { router } from "@inertiajs/react";
+import { generateExamPdf } from "@/utils/generateExamPdf";
 
 type Option = {
     id: string;
@@ -53,7 +54,6 @@ export default function ExamView({ exam, questions }: Props) {
         { id: "identification", label: "Identification", color: "blue" },
     ];
 
-    // Set initial selected based on which question type has data
     const getInitialSelected = () => {
         if (questions.multiple.length > 0) return "multipleChoice";
         if (questions.trueOrFalse.length > 0) return "trueOrFalse";
@@ -62,14 +62,67 @@ export default function ExamView({ exam, questions }: Props) {
     };
 
     const [selected, setSelected] = useState<string>(getInitialSelected());
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [editedTitle, setEditedTitle] = useState(exam.title);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleBack = () => {
         router.visit('/exam-generator');
     };
 
     const handlePublish = () => {
-        // TODO: Implement publish logic
-        console.log('Publishing exam:', exam.id);
+        try {
+            generateExamPdf(exam, questions);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Failed to generate PDF. Please try again.');
+        }
+    };
+
+    const handleSaveTitle = async () => {
+        if (editedTitle.trim() === '') {
+            alert('Title cannot be empty');
+            setEditedTitle(exam.title);
+            setIsEditingTitle(false);
+            return;
+        }
+
+        if (editedTitle === exam.title) {
+            setIsEditingTitle(false);
+            return;
+        }
+
+        setIsSaving(true);
+
+        router.patch(`/exam/${exam.id}/update-title`,
+            { title: editedTitle },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setIsEditingTitle(false);
+                    setIsSaving(false);
+                },
+                onError: (errors) => {
+                    console.error('Failed to update title:', errors);
+                    alert('Failed to update title. Please try again.');
+                    setEditedTitle(exam.title);
+                    setIsSaving(false);
+                }
+            }
+        );
+    };
+
+    const handleCancelEdit = () => {
+        setEditedTitle(exam.title);
+        setIsEditingTitle(false);
+    };
+
+    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSaveTitle();
+        } else if (e.key === 'Escape') {
+            handleCancelEdit();
+        }
     };
 
     return (
@@ -85,15 +138,51 @@ export default function ExamView({ exam, questions }: Props) {
                 </div>
 
                 <div className="flex flex-col w-full border-2 border-card-foreground rounded-md gap-1 px-3 py-2">
-                    <div className="flex flex-row w-fit gap-2 items-center group">
-                        <input
-                            type="text"
-                            defaultValue={exam.title}
-                            className="flex text-2xl font-medium w-fit text-foreground outline-none focus:outline-none focus:ring-0 focus:border-transparent"
-                        />
-                        <Pencil size="16" className="hidden group-hover:block" />
+                    <div className="flex flex-row w-full gap-3 items-center">
+                        {isEditingTitle ? (
+                            <>
+                                <input
+                                    type="text"
+                                    value={editedTitle}
+                                    onChange={(e) => setEditedTitle(e.target.value)}
+                                    onKeyDown={handleTitleKeyDown}
+                                    className="flex-1 text-2xl font-medium text-foreground outline-none border-b-2 border-blue-500 focus:outline-none focus:ring-0 bg-transparent"
+                                    autoFocus
+                                    disabled={isSaving}
+                                />
+                                <button
+                                    onClick={handleSaveTitle}
+                                    disabled={isSaving}
+                                    className="p-1.5 hover:bg-green-100 rounded text-green-600 disabled:opacity-50"
+                                    title="Save (Enter)"
+                                >
+                                    <Check size={22} />
+                                </button>
+                                <button
+                                    onClick={handleCancelEdit}
+                                    disabled={isSaving}
+                                    className="p-1.5 hover:bg-red-100 rounded text-red-600 disabled:opacity-50"
+                                    title="Cancel (Esc)"
+                                >
+                                    <X size={22} />
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <h1 className="flex-1 text-2xl font-medium text-foreground">
+                                    {exam.title}
+                                </h1>
+                                <button
+                                    onClick={() => setIsEditingTitle(true)}
+                                    className="p-1.5 hover:bg-gray-100 rounded text-gray-500 transition-colors"
+                                    title="Click to edit title"
+                                >
+                                    <Pencil size={20} />
+                                </button>
+                            </>
+                        )}
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col mt-2">
                         <div className="flex flex-row w-fit space-x-1">
                             <p className="text-md text-foreground">Difficulty:</p>
                             <p className="text-md font-semibold text-foreground">{exam.difficulty}</p>
@@ -106,12 +195,6 @@ export default function ExamView({ exam, questions }: Props) {
                                 </p>
                             ))}
                         </div>
-                        {exam.extracted_topic && (
-                            <div className="flex flex-row w-fit space-x-1">
-                                <p className="text-md text-foreground">Subject:</p>
-                                <p className="text-md font-semibold text-foreground">{exam.extracted_topic}</p>
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -120,7 +203,6 @@ export default function ExamView({ exam, questions }: Props) {
                     <div className="flex flex-row w-full gap-4">
                         <div className="flex flex-col w-[24%] gap-2">
                             {options.map((option) => {
-                                // Check if this question type has data
                                 const hasData =
                                     (option.id === "multipleChoice" && questions.multiple.length > 0) ||
                                     (option.id === "trueOrFalse" && questions.trueOrFalse.length > 0) ||

@@ -4,22 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a2eb89-80fd-467c-b17a-681577468567" name="Changes" comment="try">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="43a2eb89-80fd-467c-b17a-681577468567" name="Changes" comment="goooo ra">
+      <change afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/PublishController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/utils/generateExamPdf.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/.junie/guidelines.md" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/.junie/guidelines.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/ExamController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Models/Exam.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Models/Exam.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/AIController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/AIController.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/boost.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/boost.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/QuestionController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/QuestionController.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/exam-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/exam-view.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/question-layout/multiple-choice.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/question-layout/multiple-choice.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/question/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/question/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.env" beforeDir="false" afterPath="$PROJECT_DIR$/server/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,6 +178,12 @@
       <path value="$PROJECT_DIR$/frontend-laravel/vendor/pestphp/pest-plugin-mutate" />
       <path value="$PROJECT_DIR$/frontend-laravel/vendor/pestphp/pest" />
       <path value="$PROJECT_DIR$/frontend-laravel/vendor/pestphp/pest-plugin-laravel" />
+      <path value="$PROJECT_DIR$/frontend-laravel/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/frontend-laravel/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/frontend-laravel/vendor/dompdf/dompdf" />
+      <path value="$PROJECT_DIR$/frontend-laravel/vendor/dompdf/php-font-lib" />
+      <path value="$PROJECT_DIR$/frontend-laravel/vendor/dompdf/php-svg-lib" />
+      <path value="$PROJECT_DIR$/frontend-laravel/vendor/barryvdh/laravel-dompdf" />
     </include_path>
   </component>
   <component name="ProjectColorInfo">{
@@ -208,6 +214,11 @@
     ]
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Roy Adrian Rondina\PhpstormProjects\ExamBits\frontend-laravel\resources\js\utils" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -229,10 +240,24 @@
       <workItem from="1764313712943" duration="3870000" />
       <workItem from="1764340749470" duration="5281000" />
       <workItem from="1764425313340" duration="6700000" />
+      <workItem from="1764478738516" duration="7435000" />
     </task>
+    <task id="LOCAL-00001" summary="goooo ra">
+      <option name="closed" value="true" />
+      <created>1764480260961</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1764480260961</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="goooo ra" />
+    <option name="LAST_COMMIT_MESSAGE" value="goooo ra" />
   </component>
 </project>
