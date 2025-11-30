@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 
 type Option = {
     id: string;
@@ -17,13 +17,14 @@ interface RadioButtonProps {
         id: string;
         label: string;
         color?: string;
-    };
-    isSelected: boolean;
-    onSelect: (id: string) => void;
-    className?: string;
+    },
+    isSelected: boolean,
+    onSelect: (id: string) => void,
+    className?: string,
+    disabled?: boolean
 }
 
-function RadioButton({ option, isSelected, onSelect, className }: RadioButtonProps) {
+function RadioButton({option, isSelected, onSelect, className, disabled}: RadioButtonProps) {
     const baseClasses =
         "px-4 py-1.5 text-md rounded-md border-2 border-card-foreground text-foreground transition-colors";
 
@@ -91,4 +92,4 @@ export default function ToggleRadioGroup({
     );
 }
 
-export { RadioButton, ToggleRadioGroup };
+export {RadioButton, ToggleRadioGroup};
