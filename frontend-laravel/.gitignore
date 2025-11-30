@@ -33,3 +33,4 @@ server/.venv/
 node_modules/
 dist/
 build/
+/resources/js/routes/
