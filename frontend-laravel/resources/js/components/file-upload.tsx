@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, X, FileText } from "lucide-react";
+import {Upload, X, FileText, Delete, Trash} from "lucide-react";
 
 interface FileUploadProps {
     onFileSelect?: (file: File | null) => void;
@@ -141,9 +141,9 @@ export default function FileUpload({
                     </div>
                 </div>
             ) : (
-                <div className="flex items-center justify-between p-4 bg-green-50 border-2 border-green-500 rounded-lg">
-                    <div className="flex items-center gap-3">
-                        <FileText className="w-8 h-8 text-green-600" />
+                <div className="flex items-center justify-between p-4 border-2 border-card-foreground rounded-lg">
+                    <div className="flex items-center gap-3 text-left">
+                        <FileText className="w-8 h-8 text-foreground" />
                         <div>
                             <p className="text-sm font-medium text-gray-900">
                                 {file.name}
@@ -158,7 +158,7 @@ export default function FileUpload({
                         onClick={handleRemove}
                         className="p-1 hover:bg-red-100 rounded-full transition-colors"
                     >
-                        <X className="w-5 h-5 text-red-500" />
+                        <Trash className="w-5 h-5 text-foreground hover:text-red-400" />
                     </button>
                 </div>
             )}

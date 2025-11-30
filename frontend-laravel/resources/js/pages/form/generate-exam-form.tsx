@@ -143,7 +143,7 @@ export default function GenerateExamForm() {
                                         Identification
                                     </ToggleGroupItem>
                                 </ToggleGroup>
-                                <FieldDescription className="mt-2 text-xs text-gray-500">
+                                <FieldDescription className="mt-2 text-xs text-secondary-foreground text-left">
                                     Select one or more question types
                                 </FieldDescription>
                             </Field>

@@ -47,18 +47,37 @@ type Props = {
     questions: QuestionData;
 };
 
+const optionConfig: Record<string, { label: string; color: string }> = {
+    multiple: { label: "Multiple Choice", color: "violet" },
+    trueOrFalse: { label: "True or False", color: "yellow" },
+    identification: { label: "Identification", color: "blue" },
+};
+
+function generateOptions(data: QuestionData) {
+    return (Object.keys(data) as Array<keyof QuestionData>)
+        .filter(key => data[key] && data[key].length > 0)
+        .map(key => ({
+            id: key,
+            label: optionConfig[key].label,
+            color: optionConfig[key].color,
+        }));
+}
+
 export default function ExamView({ exam, questions }: Props) {
-    const options: Option[] = [
-        { id: "multipleChoice", label: "Multiple Choice", color: "violet" },
-        { id: "trueOrFalse", label: "True or False", color: "yellow" },
-        { id: "identification", label: "Identification", color: "blue" },
-    ];
+    const questionData: QuestionData = {
+        multiple: [],
+        trueOrFalse: [],
+        identification: [],
+    };
+
+    const options = generateOptions(questions);
+    console.log(options);
 
     const getInitialSelected = () => {
-        if (questions.multiple.length > 0) return "multipleChoice";
+        if (questions.multiple.length > 0) return "multiple";
         if (questions.trueOrFalse.length > 0) return "trueOrFalse";
         if (questions.identification.length > 0) return "identification";
-        return "multipleChoice";
+        return "multiple";
     };
 
     const [selected, setSelected] = useState<string>(getInitialSelected());
@@ -182,7 +201,7 @@ export default function ExamView({ exam, questions }: Props) {
                             </>
                         )}
                     </div>
-                    <div className="flex flex-col mt-2">
+                    <div className="flex flex-col">
                         <div className="flex flex-row w-fit space-x-1">
                             <p className="text-md text-foreground">Difficulty:</p>
                             <p className="text-md font-semibold text-foreground">{exam.difficulty}</p>
@@ -200,13 +219,9 @@ export default function ExamView({ exam, questions }: Props) {
 
                 <div className="flex flex-col w-full gap-2">
                     <h2 className="font-medium text-md">Test Types</h2>
-                    <div className="flex flex-row w-full gap-4">
-                        <div className="flex flex-col w-[24%] gap-2">
+                    <div className="flex flex-col md:flex-row sm:gap-8 w-full gap-4">
+                        <div className="flex flex-col w-full md:w-[24%] gap-2">
                             {options.map((option) => {
-                                const hasData =
-                                    (option.id === "multipleChoice" && questions.multiple.length > 0) ||
-                                    (option.id === "trueOrFalse" && questions.trueOrFalse.length > 0) ||
-                                    (option.id === "identification" && questions.identification.length > 0);
 
                                 return (
                                     <RadioButton
@@ -214,18 +229,14 @@ export default function ExamView({ exam, questions }: Props) {
                                         option={option}
                                         isSelected={selected === option.id}
                                         onSelect={setSelected}
-                                        className={`w-full text-left font-medium ${
-                                            !hasData ? 'opacity-50 cursor-not-allowed' : ''
-                                        }`}
-                                        disabled={!hasData}
                                     />
                                 );
                             })}
                         </div>
 
-                        <div className="flex flex-col w-[50%]">
-                            {selected === "multipleChoice" && questions.multiple.length > 0 ? (
-                                <section id="multipleChoice" className="flex w-full flex-col gap-3">
+                        <div className="flex flex-col w-full md:w-[50%]">
+                            {selected === "multiple" && questions.multiple.length > 0 ? (
+                                <section id="multiple" className="flex w-full flex-col gap-3">
                                     {questions.multiple.map((questionProps, index) => (
                                         <MultipleChoice key={questionProps.id} index={index} data={questionProps} />
                                     ))}

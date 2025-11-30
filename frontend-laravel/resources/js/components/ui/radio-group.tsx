@@ -21,10 +21,9 @@ interface RadioButtonProps {
     isSelected: boolean,
     onSelect: (id: string) => void,
     className?: string,
-    disabled?: boolean
 }
 
-function RadioButton({option, isSelected, onSelect, className, disabled}: RadioButtonProps) {
+function RadioButton({option, isSelected, onSelect, className}: RadioButtonProps) {
     const baseClasses =
         "px-4 py-1.5 text-md rounded-md border-2 border-card-foreground text-foreground transition-colors";
 
@@ -62,9 +61,13 @@ export default function ToggleRadioGroup({
                                              value,
                                              onValueChange
                                          }: ToggleRadioGroupProps) {
-    const [selected, setSelected] = useState<string>(value || options[0]?.id || '');
 
-    // Sync with external value prop
+    // Default selected = first option
+    const getInitial = () => value || options[0]?.id || "";
+
+    const [selected, setSelected] = useState<string>(getInitial());
+
+    // sync with external changes
     useEffect(() => {
         if (value !== undefined) {
             setSelected(value);
@@ -73,9 +76,7 @@ export default function ToggleRadioGroup({
 
     const handleSelect = (id: string) => {
         setSelected(id);
-        if (onValueChange) {
-            onValueChange(id);
-        }
+        onValueChange?.(id);
     };
 
     return (
