@@ -5,14 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="43a2eb89-80fd-467c-b17a-681577468567" name="Changes" comment="try">
-      <change afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/QuestionController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/API/AIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/API/AIController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Http/Controllers/ExamController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/app/Models/Exam.php" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/app/Models/Exam.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/AIController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/API/AIController.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/radio-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/radio-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/QuestionController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/QuestionController.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/exam-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/exam-view.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/question-layout/multiple-choice.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/question-layout/multiple-choice.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/boost/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/question/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/question/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/storage/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/.env" beforeDir="false" afterPath="$PROJECT_DIR$/server/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/app.py" afterDir="false" />
     </list>
@@ -222,7 +227,8 @@
       <workItem from="1764256658091" duration="620000" />
       <workItem from="1764304719706" duration="4027000" />
       <workItem from="1764313712943" duration="3870000" />
-      <workItem from="1764340749470" duration="2363000" />
+      <workItem from="1764340749470" duration="5281000" />
+      <workItem from="1764425313340" duration="6700000" />
     </task>
     <servers />
   </component>

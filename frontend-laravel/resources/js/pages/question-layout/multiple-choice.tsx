@@ -13,8 +13,28 @@ interface MultipleChoiceProps extends React.ComponentProps<"div"> {
 }
 
 export function MultipleChoice({ data, className, index, ...props }: MultipleChoiceProps) {
-    const letters = ["A", "B", "C", "D"]
-    const correctLetter = letters[data.choices.indexOf(data.answer)];
+    const letters = ["A", "B", "C", "D", "E", "F"]
+
+    // Helper function to strip existing letters from choices and answer
+    const stripLeadingLetter = (text: string): string => {
+        if (!text) return text;
+        // Remove patterns like "A)", "A.", "A ", "a)", "a.", "a " etc. from the beginning
+        return text.replace(/^[A-F][.)]\s*/i, '').trim();
+    }
+
+    // Clean the choices - remove any existing letter prefixes
+    const cleanedChoices = data.choices.map(choice => stripLeadingLetter(choice));
+
+    // Clean the answer and find its index
+    const cleanedAnswer = stripLeadingLetter(data.answer);
+
+    // Find which choice matches the answer (case-insensitive comparison)
+    const answerIndex = cleanedChoices.findIndex(choice =>
+        choice.toLowerCase().trim() === cleanedAnswer.toLowerCase().trim()
+    );
+
+    // Get the correct letter for the answer
+    const correctLetter = answerIndex !== -1 ? letters[answerIndex] : "?";
 
     return (
         <div
@@ -26,17 +46,16 @@ export function MultipleChoice({ data, className, index, ...props }: MultipleCho
             {...props}
         >
             {/* Question */}
-            <p className="font-medium text-lg">{index+1}. {data.question}</p>
+            <p className="font-medium text-lg">{index + 1}. {data.question}</p>
 
             {/* Choices */}
             <div className="flex flex-col gap-1 text-md text-foreground">
-                {data.choices.map((choice, index) => {
-                    const letter = letters[index]
+                {cleanedChoices.map((choice, idx) => {
+                    const letter = letters[idx]
 
                     return (
-                        <p
-                        >
-                            <span>{letter}.</span> {choice}
+                        <p key={idx}>
+                            <span className="font-semibold">{letter}.</span> {choice}
                         </p>
                     )
                 })}
@@ -44,7 +63,7 @@ export function MultipleChoice({ data, className, index, ...props }: MultipleCho
 
             {/* Answer */}
             <p className="text-md font-medium">
-                Answer: <span className="font-semibold">{correctLetter}. {data.answer}</span>
+                Answer: <span className="font-semibold">{correctLetter}. {cleanedAnswer}</span>
             </p>
         </div>
     )
