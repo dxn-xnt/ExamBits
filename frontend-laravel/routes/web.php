@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\QuestionController;
-
+use App\Http\Controllers\PublishController;
 
 // Home / Landing Page - Shows all exams
 Route::get('/', [ExamController::class, 'index'])
@@ -29,7 +29,19 @@ Route::prefix('exam-generator')->group(function () {
     // Export generated exam (PDF / Word / etc.)
     Route::get('/export/{examId}', [ExamController::class, 'export'])
         ->name('exam.export');
+
+    // Publish exam - Generate PDF
+    Route::get('/publish/{examId}', [PublishController::class, 'generatePdf'])
+        ->name('exam.publish');
+
+    // Generate Answer Key PDF
+    Route::get('/answer-key/{examId}', [PublishController::class, 'generateAnswerKey'])
+        ->name('exam.answer-key');
 });
+
+// Update exam title - MOVED OUTSIDE exam-generator prefix
+Route::patch('/exam/{id}/update-title', [ExamController::class, 'updateTitle'])
+    ->name('exam.updateTitle');
 
 // Question Management Routes
 Route::prefix('questions')->group(function () {

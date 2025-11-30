@@ -21,6 +21,9 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - @inertiajs/react (INERTIA) - v2
 - react (REACT) - v19
 - tailwindcss (TAILWINDCSS) - v4
+- @laravel/vite-plugin-wayfinder (WAYFINDER) - v0
+- eslint (ESLINT) - v9
+- prettier (PRETTIER) - v3
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, naming.
@@ -374,8 +377,6 @@ it('may reset the password', function () {
     Notification::assertSent(ResetPassword::class);
 });
 </code-snippet>
-
-
 
 <code-snippet name="Pest Smoke Testing Example" lang="php">
 $pages = visit(['/', '/about', '/contact']);

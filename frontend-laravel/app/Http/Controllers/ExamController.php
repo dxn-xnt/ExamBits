@@ -187,7 +187,7 @@ class ExamController extends Controller
                     'question_type' => $q['type'] ?? $this->mapQuestionType($q),
                     'options' => json_encode($q['options'] ?? []),
                     'correct_answer' => $q['correct_answer'],
-                    'explanation' => null,  // No explanation stored
+                    'explanation' => null,
                     'order' => $index + 1,
                     'points' => 1
                 ]);
@@ -252,6 +252,20 @@ class ExamController extends Controller
             ],
             'questions' => $transformedQuestions
         ]);
+    }
+
+
+    public function updateTitle(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255'
+        ]);
+
+        $exam = Exam::findOrFail($id);
+        $exam->title = $request->title;
+        $exam->save();
+
+        return back()->with('success', 'Exam title updated successfully');
     }
 
     public function export($examId)
