@@ -21,10 +21,9 @@ interface RadioButtonProps {
     isSelected: boolean,
     onSelect: (id: string) => void,
     className?: string,
-    disabled?: boolean
 }
 
-function RadioButton({option, isSelected, onSelect, className, disabled}: RadioButtonProps) {
+function RadioButton({option, isSelected, onSelect, className}: RadioButtonProps) {
     const baseClasses =
         "px-4 py-1.5 text-md rounded-md border-2 border-card-foreground text-foreground transition-colors";
 
