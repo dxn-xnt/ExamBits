@@ -5,31 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="43a2eb89-80fd-467c-b17a-681577468567" name="Changes" comment="git ignore">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ExamBits.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ExamBits.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/ExamController.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/QuestionController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/QuestionController.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/actions/App/Http/Controllers/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/app-content.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/app-content.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/app-header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/app-header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/file-upload.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/file-upload.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/field.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/field.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/radio-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/components/ui/radio-group.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/layouts/app-layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/layouts/app-layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/exam-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/exam-view.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/form/generate-exam-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/form/generate-exam-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/landing-page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/pages/landing-page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/exam/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/question/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-laravel/resources/js/routes/question/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ChangesViewManager" show_ignored="true" />
   <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/frontend-laravel/composer.json</pharConfigPath>
     <execution />
@@ -201,13 +191,16 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dan-programs&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#12 on dan-programs&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\Dan\\PycharmProjects\\ExamBits\\frontend-laravel\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
@@ -239,6 +232,8 @@
       <workItem from="1764340749470" duration="5281000" />
       <workItem from="1764425313340" duration="6700000" />
       <workItem from="1764482538524" duration="5272000" />
+      <workItem from="1764522521063" duration="284000" />
+      <workItem from="1764523118601" duration="738000" />
     </task>
     <task id="LOCAL-00001" summary="Commit this change">
       <option name="closed" value="true" />
@@ -264,7 +259,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764489076442</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="git ignore">
+      <option name="closed" value="true" />
+      <created>1764521939349</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1764521939349</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -272,11 +275,11 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Dont mind" />
-    <MESSAGE value="git ignore" />
     <MESSAGE value="Commit this change" />
-    <option name="LAST_COMMIT_MESSAGE" value="Commit this change" />
+    <MESSAGE value="git ignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="git ignore" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ExamBits$app.coverage" NAME="app Coverage Results" MODIFIED="1764487274282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" />
+    <SUITE FILE_PATH="coverage/ExamBits$app.coverage" NAME="app Coverage Results" MODIFIED="1764523153567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" />
   </component>
 </project>

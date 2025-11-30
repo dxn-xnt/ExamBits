@@ -69,7 +69,8 @@ export default function ExamView({ exam, questions }: Props) {
         identification: [],
     };
 
-    const options = generateOptions(questionData);
+    const options = generateOptions(questions);
+    console.log(options);
 
     // Set initial selected based on which question type has data
     const getInitialSelected = () => {
