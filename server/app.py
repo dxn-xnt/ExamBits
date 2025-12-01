@@ -7,6 +7,98 @@ import json
 import io
 import requests
 import re
+from sentence_transformers import SentenceTransformer, util
+import nltk
+# Optional if not downloaded
+# nltk.download('punkt')
+
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+# -------------------------------
+# Load your text
+# -------------------------------
+text = """Photosynthesis is the process that allows plants to make their own food using sunlight, water, and carbon dioxide. Instead of eating like humans and animals, plants produce their own source of energy. This important process mostly takes place in the leaves, where special structures called chloroplasts are found. Inside these chloroplasts is chlorophyll, the green substance that captures sunlight and starts the process.
+To understand photosynthesis better, we should look at what plants need for it to happen. First is sunlight, which provides the energy required to begin the process. Next is water, which is absorbed from the soil through the plant’s roots. The third is carbon dioxide, which enters the leaves through small holes called stomata. When these three are combined, plants can create glucose, their food, and release oxygen into the air as a by-product.
+The process of photosynthesis happens in two main stages. The first stage is the light-dependent reaction, which needs sunlight and takes place in the thylakoid membranes of the chloroplast. In this stage, water is broken down to release oxygen and energy. The second stage is the Calvin Cycle, which uses the energy from the first stage to turn carbon dioxide into glucose. Even though it does not require light directly, it cannot happen without the first stage. The glucose produced is very important to the plant. It is used as energy for growth and repair, and extra glucose can be stored for future use. Some of the glucose is changed into starch and kept in different parts of the plant like the stem, roots, or fruits. When animals and humans eat plants, they also get this stored energy, which makes photosynthesis the base of all food chains.
+In conclusion, photosynthesis is not just important to plants but to all living things. It keeps oxygen in the atmosphere and provides energy for ecosystems. Without photosynthesis, there would be little oxygen and no plants to support life. That is why this process is considered one of the most important natural processes on Earth."""
+
+# -------------------------------
+# Load embedding model
+# -------------------------------
+embedder = SentenceTransformer("all-MiniLM-L6-v2")
+
+# -------------------------------
+# Step 1: Split into sentences
+# -------------------------------
+sentences = nltk.sent_tokenize(text)
+
+# -------------------------------
+# Step 2: Encode sentences
+# -------------------------------
+sentence_embeddings = embedder.encode(sentences, convert_to_tensor=True)
+
+# -------------------------------
+# Step 3: Encode entire document (centroid)
+# -------------------------------
+document_embedding = embedder.encode(text, convert_to_tensor=True)
+
+# -------------------------------
+# Step 4: Importance scoring
+# -------------------------------
+scores = util.cos_sim(sentence_embeddings, document_embedding).cpu().tolist()
+
+ranked = sorted(
+    zip(sentences, scores),
+    key=lambda x: x[1],
+    reverse=True
+)
+
+# Keep ALL sentences ranked by importance
+important_sentences = [s for s, sc in ranked]
+
+# -------------------------------
+# Load text-to-question model
+# Replace with your preferred model
+# -------------------------------
+model_name = "google/flan-t5-base"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+# -------------------------------
+# Step 5: Generate a question for EACH sentence
+# -------------------------------
+generated_questions = []
+
+for sent in important_sentences:
+    prompt = "generate question: " + sent
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(**inputs, max_length=128)
+    question = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    qa_prompt = f"Answer the question based on the context:\nContext: {sent}\nQuestion: {question}"
+    inputs = tokenizer(qa_prompt, return_tensors="pt")
+    outputs = model.generate(**inputs, max_length=128)
+    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    generated_questions.append({
+        "sentence": sent,
+        "question": question,
+        "answer": answer
+    })
+
+
+
+# -------------------------------
+# Step 6: Print results
+# -------------------------------
+print("\n=== GENERATED QUESTIONS FOR EACH IMPORTANT SENTENCE ===")
+for item in generated_questions:
+    print("\nOriginal Sentence:")
+    print(" -", item["sentence"])
+    print("Generated Question:")
+    print(" ->", item["question"])
+    print("Answer:")
+    print(" ->", item["answer"])
 
 # Load environment variables
 load_dotenv()
