@@ -6,7 +6,13 @@
       <sourceFolder url="file://$MODULE_DIR$/frontend-laravel/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/frontend-laravel/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <sourceFolder url="file://$MODULE_DIR$/frontend-laravel/tests" isTestSource="true" packagePrefix="Tests\" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend-laravel/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend-laravel/public/build" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend-laravel/resources/js/routes" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend-laravel/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/server/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/server/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend-laravel/resources/js/actions" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.14 virtualenv at C:\Users\Dan\PycharmProjects\ExamBits\server\.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

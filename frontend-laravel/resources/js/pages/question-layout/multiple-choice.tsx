@@ -11,30 +11,38 @@ interface MultipleChoiceProps extends React.ComponentProps<"div"> {
     data: MultipleChoiceData
     index: number
 }
-
 export function MultipleChoice({ data, className, index, ...props }: MultipleChoiceProps) {
-    const letters = ["A", "B", "C", "D", "E", "F"]
+    const letters = ["A", "B", "C", "D"];
 
-    // Helper function to strip existing letters from choices and answer
+    // Helper to strip leading letters like "A.", "A)", etc.
     const stripLeadingLetter = (text: string): string => {
         if (!text) return text;
-        // Remove patterns like "A)", "A.", "A ", "a)", "a.", "a " etc. from the beginning
         return text.replace(/^[A-F][.)]\s*/i, '').trim();
-    }
+    };
 
-    // Clean the choices - remove any existing letter prefixes
     const cleanedChoices = data.choices.map(choice => stripLeadingLetter(choice));
 
-    // Clean the answer and find its index
-    const cleanedAnswer = stripLeadingLetter(data.answer);
+    // --- FIX: Determine if answer is just a letter ---
+    const isLetterAnswer = /^[A-D]$/i.test(data.answer.trim());
 
-    // Find which choice matches the answer (case-insensitive comparison)
-    const answerIndex = cleanedChoices.findIndex(choice =>
-        choice.toLowerCase().trim() === cleanedAnswer.toLowerCase().trim()
-    );
+    let correctLetter = "";
+    let cleanedAnswer = "";
 
-    // Get the correct letter for the answer
-    const correctLetter = answerIndex !== -1 ? letters[answerIndex] : "?";
+    if (isLetterAnswer) {
+        // If answer is "A", "B", "C", or "D"
+        correctLetter = data.answer.toUpperCase();
+        const index = letters.indexOf(correctLetter);
+        cleanedAnswer = cleanedChoices[index] || "";
+    } else {
+        // Otherwise treat as full text answer
+        cleanedAnswer = stripLeadingLetter(data.answer);
+
+        const answerIndex = cleanedChoices.findIndex(choice =>
+            choice.toLowerCase().trim() === cleanedAnswer.toLowerCase().trim()
+        );
+
+        correctLetter = answerIndex !== -1 ? letters[answerIndex] : "";
+    }
 
     return (
         <div
@@ -51,13 +59,12 @@ export function MultipleChoice({ data, className, index, ...props }: MultipleCho
             {/* Choices */}
             <div className="flex flex-col gap-1 text-md text-foreground">
                 {cleanedChoices.map((choice, idx) => {
-                    const letter = letters[idx]
-
+                    const letter = letters[idx];
                     return (
                         <p key={idx}>
                             <span className="font-semibold">{letter}.</span> {choice}
                         </p>
-                    )
+                    );
                 })}
             </div>
 
@@ -66,5 +73,5 @@ export function MultipleChoice({ data, className, index, ...props }: MultipleCho
                 Answer: <span className="font-semibold">{correctLetter}. {cleanedAnswer}</span>
             </p>
         </div>
-    )
+    );
 }
