@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ExamController;
@@ -10,8 +11,15 @@ use App\Http\Controllers\PublishController;
 Route::get('/', [ExamController::class, 'index'])
     ->name('home');
 
+
 // Exam Generator Routes
 Route::prefix('exam-generator')->group(function () {
+    Route::get('/login', [UserController::class, 'login'])
+        ->name('user.login');
+
+    Route::get('/signup', [UserController::class, 'signup'])
+        ->name('user.signup');
+
     // Dashboard - List all exams
     Route::get('/', [ExamController::class, 'index'])
         ->name('exam.index');
@@ -19,8 +27,12 @@ Route::prefix('exam-generator')->group(function () {
     // Show generate form (GET) & Handle generation (POST)
     Route::get('/generate', [ExamController::class, 'generate'])
         ->name('exam.generate-form');
+
     Route::post('/generate', [ExamController::class, 'generate'])
         ->name('exam.generate-exam');
+
+    Route::get('/generating', [ExamController::class, 'generating'])
+        ->name('exam.generating-screen');
 
     // View generated exam - NOW USES QuestionController
     Route::get('/view/{id}', [QuestionController::class, 'index'])

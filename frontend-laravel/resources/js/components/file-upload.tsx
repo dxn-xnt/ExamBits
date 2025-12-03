@@ -11,7 +11,7 @@ interface FileUploadProps {
 
 export default function FileUpload({
                                        onFileSelect,
-                                       accept = ".pdf",
+                                       accept = ".pdf,.doc,.docx,.txt",
                                        maxSize = 10,
                                        value
                                    }: FileUploadProps) {
