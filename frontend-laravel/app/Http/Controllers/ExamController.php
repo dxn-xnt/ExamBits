@@ -34,8 +34,8 @@ class ExamController extends Controller
         }
 
         // Increase PHP execution time for AI processing
-        set_time_limit(180); // 3 minutes
-        ini_set('max_execution_time', '180');
+        set_time_limit(300); // 5 minutes
+        ini_set('max_execution_time', '300');
 
         // Handle POST - Generate exam
         $request->validate([
@@ -43,7 +43,8 @@ class ExamController extends Controller
             'difficulty' => 'required|in:easy,moderate,hard',
             'question_types' => 'required|array|min:1',
             'question_types.*' => 'in:multipleChoice,trueOrFalse,identification',
-            'num_questions' => 'integer|min:1|max:50'
+            'num_questions' => 'integer|min:1|max:50',
+            'subject' => 'nullable|string|max:100'
         ]);
 
         try {
@@ -58,12 +59,14 @@ class ExamController extends Controller
             $typeMap = [
                 'multipleChoice' => 'multiple-choice',
                 'trueOrFalse' => 'true-false',
-                'identification' => 'identification'  // Changed from 'short-answer'
+                'identification' => 'identification'
             ];
 
             $selectedTypes = array_map(function($type) use ($typeMap) {
                 return $typeMap[$type] ?? 'multiple-choice';
             }, $request->question_types);
+
+            $questionsPerType = intval($request->num_questions ?? 10);
 
             // ===== STEP 1: Extract PDF content =====
             Log::info('Step 1: Extracting PDF content');
@@ -92,7 +95,7 @@ class ExamController extends Controller
             // ===== STEP 2: Analyze topic from content =====
             Log::info('Step 2: Analyzing main topic from content');
 
-            $topicResponse = Http::timeout(60)
+            $topicResponse = Http::timeout(90)
                 ->post("{$this->flaskUrl}/api/ai/analyze-topic", [
                     'content' => $content
                 ]);
@@ -103,71 +106,64 @@ class ExamController extends Controller
             }
 
             $topicData = $topicResponse->json();
-            $topic = $topicData['topic'];
+            $extractedTopic = $topicData['topic'];
 
-            Log::info('Topic extracted', ['topic' => $topic]);
+            Log::info('Topic extracted', ['topic' => $extractedTopic]);
 
-            // ===== STEP 3: Generate questions from TOPIC =====
-            Log::info('Step 3: Generating questions from topic');
+            // ===== STEP 3: Generate questions from FULL CONTENT =====
+            Log::info('Step 3: Generating questions from full PDF content');
 
             $allQuestions = [];
-            $questionsPerType = ceil(($request->num_questions ?? 10) / count($selectedTypes));
+            $totalQuestionsNeeded = count($selectedTypes) * $questionsPerType;
 
             foreach ($selectedTypes as $type) {
-                Log::info("Generating {$questionsPerType} {$type} questions");
+                Log::info("Generating {$questionsPerType} {$type} questions from full content");
 
-                // Generate questions one at a time to stay within token limits
-                $successCount = 0;
-                $attempts = 0;
-                $maxAttempts = $questionsPerType * 3; // Allow up to 3x retries
+                try {
+                    // Send FULL content to AI for better question generation
+                    $questionsResponse = Http::timeout(120)
+                        ->post("{$this->flaskUrl}/api/ai/generate-questions", [
+                            'content' => $content, // Send full PDF content
+                            'num_questions' => $questionsPerType,
+                            'difficulty' => $difficultyMap[$request->difficulty],
+                            'type' => $type
+                        ]);
 
-                while ($successCount < $questionsPerType && $attempts < $maxAttempts) {
-                    $attempts++;
+                    if ($questionsResponse->successful()) {
+                        $data = $questionsResponse->json();
 
-                    try {
-                        $questionsResponse = Http::timeout(90)
-                            ->post("{$this->flaskUrl}/api/ai/generate-questions", [
-                                'topic' => $topic,
-                                'num_questions' => 1,
-                                'difficulty' => $difficultyMap[$request->difficulty],
-                                'type' => $type
-                            ]);
-
-                        if ($questionsResponse->successful()) {
-                            $data = $questionsResponse->json();
-                            if (isset($data['questions']) && count($data['questions']) > 0) {
-                                // Add the type to each question for proper identification
-                                foreach ($data['questions'] as &$question) {
-                                    $question['type'] = $type;
-                                }
-                                $allQuestions = array_merge($allQuestions, $data['questions']);
-                                $successCount++;
-                                Log::info("Generated {$type} question {$successCount} of {$questionsPerType} (attempt {$attempts})");
-                            } else {
-                                Log::warning("Question generation returned empty - attempt {$attempts}");
+                        if (isset($data['questions']) && count($data['questions']) > 0) {
+                            // Add the type to each question
+                            foreach ($data['questions'] as &$question) {
+                                $question['type'] = $type;
                             }
+
+                            $generatedCount = count($data['questions']);
+                            $allQuestions = array_merge($allQuestions, $data['questions']);
+
+                            Log::info("Successfully generated {$generatedCount} {$type} questions");
                         } else {
-                            Log::warning("Question generation failed - attempt {$attempts}");
+                            Log::warning("Question generation returned empty for type {$type}");
                         }
-
-                        // Small delay to avoid rate limits
-                        usleep(500000); // 0.5 second delay
-
-                    } catch (\Exception $e) {
-                        Log::warning("Failed to generate question on attempt {$attempts}: " . $e->getMessage());
+                    } else {
+                        $errorData = $questionsResponse->json();
+                        Log::error("Question generation failed for type {$type}", ['error' => $errorData]);
                     }
+
+                } catch (\Exception $e) {
+                    Log::error("Exception while generating {$type} questions: " . $e->getMessage());
                 }
             }
 
             if (empty($allQuestions)) {
-                return back()->with('error', 'Failed to generate questions. Please try again.');
+                return back()->with('error', 'Failed to generate questions from the content. Please try again.');
             }
 
             Log::info('Total questions generated', ['count' => count($allQuestions)]);
 
             // ===== STEP 4: Save to database =====
             $exam = Exam::create([
-                'title' => 'Generated Exam - ' . now()->format('Y-m-d H:i'),
+                'title' => $extractedTopic . ' - Exam (' . now()->format('Y-m-d') . ')',
                 'description' => "Generated from {$request->file('file')->getClientOriginalName()}",
                 'total_questions' => count($allQuestions),
                 'settings' => [
@@ -175,16 +171,17 @@ class ExamController extends Controller
                     'question_types' => $request->question_types,
                     'source_file' => $request->file('file')->getClientOriginalName(),
                     'source_pages' => $pdfData['pages'] ?? null,
-                    'extracted_topic' => $topic
+                    'extracted_topic' => $extractedTopic,
+                    'subject' => $request->subject ?? $extractedTopic
                 ]
             ]);
 
-            // Save questions with their original type
+            // Save questions with proper mapping
             foreach ($allQuestions as $index => $q) {
                 Question::create([
                     'exam_id' => $exam->id,
                     'question_text' => $q['question'],
-                    'question_type' => $q['type'] ?? $this->mapQuestionType($q),
+                    'question_type' => $q['type'],
                     'options' => json_encode($q['options'] ?? []),
                     'correct_answer' => $q['correct_answer'],
                     'explanation' => null,
@@ -193,10 +190,14 @@ class ExamController extends Controller
                 ]);
             }
 
-            Log::info('Exam saved successfully', ['exam_id' => $exam->id]);
+            Log::info('Exam saved successfully', [
+                'exam_id' => $exam->id,
+                'topic' => $extractedTopic,
+                'total_questions' => count($allQuestions)
+            ]);
 
             return redirect()->route('exam.view', ['id' => $exam->id])
-                ->with('success', "Successfully generated {$exam->total_questions} questions from topic: {$topic}");
+                ->with('success', "Successfully generated exam on topic: {$extractedTopic} ({$exam->total_questions} questions)");
 
         } catch (\Exception $e) {
             Log::error('Exam generation failed', [
@@ -212,7 +213,7 @@ class ExamController extends Controller
     {
         $exam = Exam::with('questions')->findOrFail($id);
 
-        // Transform questions for your components
+        // Transform questions for components
         $transformedQuestions = [
             'multiple' => [],
             'trueOrFalse' => [],
@@ -224,36 +225,39 @@ class ExamController extends Controller
                 ? json_decode($question->options, true)
                 : $question->options;
 
+            $questionData = [
+                'id' => $question->id,
+                'question' => $question->question_text,
+                'answer' => $question->correct_answer
+            ];
+
             if ($question->question_type === 'multiple-choice') {
-                $transformedQuestions['multiple'][] = [
-                    'question' => $question->question_text,
-                    'choices' => $options ?? [],
-                    'answer' => $question->correct_answer
-                ];
+                // For multiple choice, we need to include choices
+                $questionData['choices'] = $options ?? [];
+                $transformedQuestions['multiple'][] = $questionData;
             } elseif ($question->question_type === 'true-false') {
-                $transformedQuestions['trueOrFalse'][] = [
-                    'question' => $question->question_text,
-                    'answer' => $question->correct_answer
-                ];
+                $transformedQuestions['trueOrFalse'][] = $questionData;
             } else {  // identification
-                $transformedQuestions['identification'][] = [
-                    'question' => $question->question_text,
-                    'answer' => $question->correct_answer
-                ];
+                $transformedQuestions['identification'][] = $questionData;
             }
         }
 
+        // Get extracted topic for display
+        $extractedTopic = $exam->settings['extracted_topic'] ?? 'Unknown Topic';
+
         return Inertia::render('exam-view', [
             'exam' => [
+                'id' => $exam->id,
                 'title' => $exam->title,
-                'topics' => $exam->settings['question_types'] ?? [],
+                'topic' => $extractedTopic, // Pass the extracted topic
+                'question_types' => $exam->settings['question_types'] ?? [], // Keep this for reference if needed
                 'difficulty' => ucfirst($exam->settings['difficulty'] ?? 'N/A'),
-                'extracted_topic' => $exam->settings['extracted_topic'] ?? null
+                'extracted_topic' => $extractedTopic,
+                'subject' => $exam->settings['subject'] ?? null
             ],
             'questions' => $transformedQuestions
         ]);
     }
-
 
     public function updateTitle(Request $request, $id)
     {
@@ -297,29 +301,5 @@ class ExamController extends Controller
     public function destroy(Exam $exam)
     {
         //
-    }
-
-    private function mapQuestionType($question)
-    {
-        // Check if it has options
-        if (isset($question['options']) && is_array($question['options'])) {
-            $optionCount = count($question['options']);
-
-            // True/False: has exactly 2 options with "True" and "False"
-            if ($optionCount === 2) {
-                $options = array_map('strtolower', $question['options']);
-                if (in_array('true', $options) && in_array('false', $options)) {
-                    return 'true-false';
-                }
-            }
-
-            // Multiple Choice: has more than 2 options
-            if ($optionCount > 2) {
-                return 'multiple-choice';
-            }
-        }
-
-        // Identification: no options or empty options array
-        return 'identification';
     }
 }

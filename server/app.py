@@ -7,6 +7,13 @@ import json
 import io
 import requests
 import re
+import tempfile
+from Validations import (
+    extract_text_excluding_tables,
+    validate_text,
+    contains_actual_sentences,
+    validate_structure
+)
 
 # Load environment variables
 load_dotenv()
@@ -17,37 +24,59 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Configuration
-AI_SERVICE = os.getenv('AI_SERVICE', 'openrouter')
-OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
-AI_MODEL = os.getenv('AI_MODEL', 'openai/gpt-4-turbo-preview')
+AZURE_OPENAI_ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')
+AZURE_OPENAI_API_KEY = os.getenv('AZURE_OPENAI_API_KEY')
+AZURE_OPENAI_DEPLOYMENT = os.getenv('AZURE_OPENAI_DEPLOYMENT', 'gpt-4.1')
+AZURE_API_VERSION = os.getenv('AZURE_API_VERSION', '2024-08-01-preview')
 
 
-def call_ai_model(messages, temperature=0.7, max_tokens=600):
-    """Call OpenRouter API for AI completions with minimal token limit"""
+def call_azure_openai(messages, temperature=0.7, max_tokens=2000):
+    """Call Azure OpenAI API for completions"""
     try:
-        if not OPENROUTER_API_KEY:
-            raise Exception("OpenRouter API key not configured")
+        if not AZURE_OPENAI_ENDPOINT or not AZURE_OPENAI_API_KEY:
+            raise Exception("Azure OpenAI credentials not configured")
 
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:5173",
-                "X-Title": "ExamBits"
-            },
-            json={
-                "model": AI_MODEL,
-                "messages": messages,
-                "temperature": temperature,
-                "max_tokens": max_tokens
-            },
-            timeout=60
-        )
+        # Remove trailing slash from endpoint if present
+        endpoint = AZURE_OPENAI_ENDPOINT.rstrip('/')
+
+        # Construct the Azure OpenAI endpoint URL
+        url = f"{endpoint}/openai/deployments/{AZURE_OPENAI_DEPLOYMENT}/chat/completions?api-version={AZURE_API_VERSION}"
+
+        print(f"[DEBUG] Calling Azure OpenAI:")
+        print(f"[DEBUG] URL: {url}")
+        print(f"[DEBUG] Deployment: {AZURE_OPENAI_DEPLOYMENT}")
+        print(f"[DEBUG] API Version: {AZURE_API_VERSION}")
+
+        headers = {
+            "Content-Type": "application/json",
+            "api-key": AZURE_OPENAI_API_KEY
+        }
+
+        payload = {
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        }
+
+        response = requests.post(url, headers=headers, json=payload, timeout=120)
+
+        print(f"[DEBUG] Response Status: {response.status_code}")
 
         if response.status_code != 200:
             error_data = response.json() if response.text else {}
-            raise Exception(f"OpenRouter API error ({response.status_code}): {error_data.get('error', {}).get('message', response.text)}")
+            print(f"[DEBUG] Error Response: {error_data}")
+
+            if response.status_code == 404:
+                raise Exception(
+                    f"Azure OpenAI deployment not found. "
+                    f"Please check:\n"
+                    f"1. Endpoint: {endpoint}\n"
+                    f"2. Deployment name: {AZURE_OPENAI_DEPLOYMENT}\n"
+                    f"3. API version: {AZURE_API_VERSION}\n"
+                    f"Error: {error_data.get('error', {}).get('message', response.text)}"
+                )
+            else:
+                raise Exception(f"Azure OpenAI API error ({response.status_code}): {error_data.get('error', {}).get('message', response.text)}")
 
         data = response.json()
         return data['choices'][0]['message']['content']
@@ -60,46 +89,28 @@ def call_ai_model(messages, temperature=0.7, max_tokens=600):
         raise Exception(f"AI API call failed: {str(e)}")
 
 
-def extract_main_topic(text, max_length=1000):
-    """Extract and summarize the main topic from text using simple text analysis"""
-    # Take a sample from the beginning, middle, and end
-    text_length = len(text)
+def extract_topic_from_text(text):
+    """Extract the main topic/subject from the text content"""
+    # Take first 2000 characters for topic analysis
+    sample_text = text[:2000] if len(text) > 2000 else text
 
-    if text_length <= max_length:
-        sample_text = text
-    else:
-        # Sample from different parts
-        part_size = max_length // 3
-        beginning = text[:part_size]
-        middle_start = (text_length // 2) - (part_size // 2)
-        middle = text[middle_start:middle_start + part_size]
-        end = text[-part_size:]
-        sample_text = beginning + "\n...\n" + middle + "\n...\n" + end
+    prompt = f"""Analyze this educational content and identify the main topic/subject in 1-3 words ONLY.
 
-    # Clean the text
-    sample_text = re.sub(r'\s+', ' ', sample_text).strip()
+Content:
+{sample_text}
 
-    # Extract keywords and generate a simple topic description
-    lines = sample_text.split('\n')
-    # Get first few meaningful lines (likely titles/headers)
-    meaningful_lines = [line.strip() for line in lines if len(line.strip()) > 20][:5]
+Examples:
+- "Photosynthesis"
+- "World War II"
+- "Algebraic Equations"
+- "Cell Biology"
 
-    return ' '.join(meaningful_lines[:3]) if meaningful_lines else sample_text[:500]
-
-
-def analyze_topic_with_ai(text_sample):
-    """Use AI to extract the main topic in one sentence"""
-    prompt = f"""Analyze this educational content and provide ONLY a one-sentence topic description (max 20 words).
-
-Content sample:
-{text_sample}
-
-Respond with ONLY the topic sentence, nothing else."""
+Respond with ONLY the topic name (1-3 words), nothing else."""
 
     messages = [
         {
             "role": "system",
-            "content": "You are a content analyzer. Respond only with a brief topic description."
+            "content": "You are a topic identifier. Respond ONLY with the main topic name in 1-3 words."
         },
         {
             "role": "user",
@@ -108,13 +119,19 @@ Respond with ONLY the topic sentence, nothing else."""
     ]
 
     try:
-        # Use minimal tokens for topic extraction
-        topic = call_ai_model(messages, temperature=0.3, max_tokens=50)
-        return topic.strip()
+        topic = call_azure_openai(messages, temperature=0.3, max_tokens=50)
+        # Clean up the response
+        topic = topic.strip().strip('"').strip("'")
+        return topic
     except Exception as e:
-        print(f"AI topic analysis failed, using fallback: {str(e)}")
-        # Fallback to simple extraction
-        return text_sample[:200]
+        print(f"Topic extraction failed: {str(e)}")
+        # Fallback: extract first meaningful line
+        lines = text.split('\n')
+        for line in lines:
+            line = line.strip()
+            if len(line) > 10 and len(line) < 100:
+                return line[:50]
+        return "Unknown Topic"
 
 
 # Original routes
@@ -123,18 +140,7 @@ def home():
     return jsonify({
         "message": "Flask API is working!",
         "service": "ExamBits AI Service",
-        "version": "2.0.0 (Topic-Based)"
-    })
-
-
-@app.route("/generate", methods=["POST"])
-def generate():
-    """Original generate endpoint"""
-    data = request.json
-    text = data.get("text", "")
-    return jsonify({
-        "input_text": text,
-        "msg": "This is where AI processing will happen."
+        "version": "3.1.0 (Azure OpenAI + PDF Validation)"
     })
 
 
@@ -144,15 +150,54 @@ def health():
     return jsonify({
         "status": "healthy",
         "service": "ExamBits AI",
-        "ai_service": AI_SERVICE,
-        "model": AI_MODEL,
-        "api_key_configured": bool(OPENROUTER_API_KEY)
+        "ai_service": "Azure OpenAI",
+        "endpoint": AZURE_OPENAI_ENDPOINT,
+        "deployment": AZURE_OPENAI_DEPLOYMENT,
+        "api_version": AZURE_API_VERSION,
+        "api_configured": bool(AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY)
     })
+
+
+@app.route("/api/ai/test-connection", methods=["GET"])
+def test_connection():
+    """Test Azure OpenAI connection"""
+    try:
+        messages = [
+            {
+                "role": "user",
+                "content": "Say 'Connection successful' if you can read this."
+            }
+        ]
+
+        response = call_azure_openai(messages, temperature=0.3, max_tokens=50)
+
+        return jsonify({
+            "success": True,
+            "message": "Azure OpenAI connection successful",
+            "response": response,
+            "config": {
+                "endpoint": AZURE_OPENAI_ENDPOINT,
+                "deployment": AZURE_OPENAI_DEPLOYMENT,
+                "api_version": AZURE_API_VERSION
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "config": {
+                "endpoint": AZURE_OPENAI_ENDPOINT,
+                "deployment": AZURE_OPENAI_DEPLOYMENT,
+                "api_version": AZURE_API_VERSION
+            }
+        }), 500
 
 
 @app.route("/api/ai/extract-pdf", methods=["POST"])
 def extract_pdf():
-    """Extract text content from uploaded PDF file"""
+    """Extract text content from uploaded PDF file with validation"""
+    temp_pdf_path = None
+
     try:
         if 'file' not in request.files:
             return jsonify({"success": False, "error": "No file provided"}), 400
@@ -165,43 +210,84 @@ def extract_pdf():
         if not file.filename.lower().endswith('.pdf'):
             return jsonify({"success": False, "error": "File must be a PDF"}), 400
 
-        # Read PDF
-        pdf_reader = PyPDF2.PdfReader(io.BytesIO(file.read()))
+        # Save uploaded file to temporary location for validation
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+            file.save(temp_file.name)
+            temp_pdf_path = temp_file.name
 
-        text = ""
-        for page_num, page in enumerate(pdf_reader.pages):
-            try:
-                extracted = page.extract_text()
-                if extracted:
-                    text += f"\n--- Page {page_num + 1} ---\n"
-                    text += extracted
-            except Exception as e:
-                print(f"Warning: Could not extract text from page {page_num + 1}: {str(e)}")
+        print(f"[PDF Validation] Validating PDF structure: {file.filename}")
 
-        if not text.strip():
+        # Step 1: Check if PDF has complex structure (tables + multi-column)
+        if validate_structure(temp_pdf_path):
+            print("[PDF Validation] PDF has complex structure (tables detected)")
             return jsonify({
                 "success": False,
-                "error": "Could not extract text from PDF. The PDF might be image-based or encrypted."
+                "error": "This PDF has a complex structure with tables or multiple columns that cannot be processed accurately. Please upload a simpler PDF with plain text content."
             }), 400
+
+        # Step 2: Extract text using advanced method (handles multi-column, excludes tables)
+        print("[PDF Validation] Extracting text with column detection...")
+        text = extract_text_excluding_tables(temp_pdf_path)
+
+        if not text or text == False:
+            print("[PDF Validation] Complex structure detected during extraction")
+            return jsonify({
+                "success": False,
+                "error": "This PDF has a complex structure that cannot be processed. Please try a different PDF."
+            }), 400
+
+        # Step 3: Validate text has actual sentences
+        if not contains_actual_sentences(text):
+            print("[PDF Validation] No proper sentences detected")
+            return jsonify({
+                "success": False,
+                "error": "The extracted text does not contain proper sentences. The PDF might be image-based or have an unusual format."
+            }), 400
+
+        # Step 4: Validate minimum sentence count
+        is_valid_length, sentence_count = validate_text(text)
+        if not is_valid_length:
+            print(f"[PDF Validation] Text too short: {sentence_count} sentences")
+            return jsonify({
+                "success": False,
+                "error": f"The PDF content is too short ({sentence_count} sentences). Please upload a PDF with more substantial content (minimum 10 sentences)."
+            }), 400
+
+        print(f"[PDF Validation] ✓ Valid PDF with {sentence_count} sentences")
+
+        # Count pages from the extracted text
+        pages = text.count('--- Page')
 
         return jsonify({
             "success": True,
             "content": text.strip(),
-            "pages": len(pdf_reader.pages),
-            "char_count": len(text)
+            "pages": pages,
+            "char_count": len(text),
+            "sentence_count": sentence_count,
+            "validation": {
+                "has_tables": False,
+                "is_multi_column": False,
+                "is_valid": True
+            }
         })
 
-    except PyPDF2.errors.PdfReadError:
-        return jsonify({
-            "success": False,
-            "error": "Invalid or corrupted PDF file"
-        }), 400
     except Exception as e:
+        print(f"[PDF Validation] Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             "success": False,
             "error": "PDF extraction failed",
             "details": str(e)
         }), 500
+
+    finally:
+        # Clean up temporary file
+        if temp_pdf_path and os.path.exists(temp_pdf_path):
+            try:
+                os.unlink(temp_pdf_path)
+            except Exception as e:
+                print(f"Warning: Could not delete temp file: {e}")
 
 
 @app.route("/api/ai/analyze-topic", methods=["POST"])
@@ -223,11 +309,7 @@ def analyze_topic():
 
         print(f"Analyzing topic from {len(content)} characters...")
 
-        # Extract a sample for analysis
-        text_sample = extract_main_topic(content, max_length=1000)
-
-        # Use AI to get concise topic
-        topic = analyze_topic_with_ai(text_sample)
+        topic = extract_topic_from_text(content)
 
         print(f"Extracted topic: {topic}")
 
@@ -248,25 +330,23 @@ def analyze_topic():
 
 @app.route("/api/ai/generate-questions", methods=["POST"])
 def generate_questions():
-    """Generate exam questions from TOPIC (without explanations)"""
+    """Generate exam questions from full PDF content"""
     try:
         data = request.json
 
         if not data:
             return jsonify({"success": False, "error": "No data provided"}), 400
 
-        # Now expecting 'topic' instead of 'content'
-        topic = data.get('topic', '')
-        num_questions = int(data.get('num_questions', 5))
+        content = data.get('content', '')
+        num_questions = int(data.get('num_questions', 10))
         difficulty = data.get('difficulty', 'medium')
         question_type = data.get('type', 'multiple-choice')
 
-        print(topic)
         # Validation
-        if not topic or len(topic.strip()) < 10:
+        if not content or len(content.strip()) < 100:
             return jsonify({
                 "success": False,
-                "error": "Topic is too short"
+                "error": "Content is too short to generate questions"
             }), 400
 
         if num_questions < 1 or num_questions > 50:
@@ -275,29 +355,61 @@ def generate_questions():
                 "error": "Number of questions must be between 1 and 50"
             }), 400
 
-        # Build format example and specific instructions based on question type
+        # Truncate content if too long (keep first ~8000 chars to stay within token limits)
+        max_content_length = 8000
+        if len(content) > max_content_length:
+            content = content[:max_content_length] + "\n\n[Content truncated for processing...]"
+
+        print(f"Generating {num_questions} {question_type} questions from {len(content)} characters...")
+
+        # Build strict format requirements based on question type
         if question_type == 'multiple-choice':
-            format_example = '''[{"question": "Question text?", "options": ["A", "B", "C", "D"], "correct_answer": "A"}]'''
-            type_instruction = "MULTIPLE CHOICE with 4 options (A, B, C, D)"
+            format_rules = """MULTIPLE CHOICE FORMAT (STRICT):
+- Exactly 4 options labeled A, B, C, D
+- Options array must have exactly 4 strings
+- correct_answer must be one letter: "A", "B", "C", or "D"
+- Example: {"question": "What is X?", "options": ["Choice A", "Choice B", "Choice C", "Choice D"], "correct_answer": "B"}"""
+
         elif question_type == 'true-false':
-            format_example = '''[{"question": "Statement text?", "options": ["True", "False"], "correct_answer": "True"}]'''
-            type_instruction = "TRUE/FALSE with exactly 2 options: ['True', 'False']"
+            format_rules = """TRUE/FALSE FORMAT (STRICT):
+- Exactly 2 options: ["True", "False"]
+- correct_answer must be exactly "True" or "False"
+- Example: {"question": "Statement?", "options": ["True", "False"], "correct_answer": "True"}"""
+
         else:  # identification
-            format_example = '''[{"question": "Question text?", "options": [], "correct_answer": "Short answer"}]'''
-            type_instruction = "IDENTIFICATION (fill-in-the-blank) with EMPTY options array []"
+            format_rules = """IDENTIFICATION FORMAT (STRICT):
+- Empty options array: []
+- correct_answer is a short text answer (1-5 words)
+- Example: {"question": "What is ___?", "options": [], "correct_answer": "Photosynthesis"}"""
 
-        # Ultra-simplified prompt with STRICT type enforcement
-        prompt = f"""Generate {num_questions} {difficulty} {type_instruction} question(s) about: {topic}
+        # Create the prompt
+        prompt = f"""You are an expert exam question generator. Generate {num_questions} {difficulty} difficulty {question_type} questions based on the following educational content.
 
-CRITICAL: Question type MUST be {question_type}
-{format_example}
+CONTENT:
+{content}
 
-Return ONLY valid JSON array, no markdown:"""
+REQUIREMENTS:
+1. Generate EXACTLY {num_questions} questions
+2. Difficulty level: {difficulty}
+3. Question type: {question_type}
+4. Questions must be based ONLY on information in the content above
+5. Questions should test understanding, not just memorization
+6. All questions must be clear and unambiguous
+
+{format_rules}
+
+CRITICAL: Return ONLY a valid JSON array. No markdown, no explanations, no additional text.
+Format: [
+  {{"question": "...", "options": [...], "correct_answer": "..."}},
+  ...
+]
+
+Generate the questions now:"""
 
         messages = [
             {
                 "role": "system",
-                "content": f"You are an exam question generator. Generate ONLY {question_type} questions. Return JSON only."
+                "content": f"You are an expert exam question generator. You create {question_type} questions based on educational content. You ONLY return valid JSON arrays with no additional formatting or text."
             },
             {
                 "role": "user",
@@ -305,44 +417,22 @@ Return ONLY valid JSON array, no markdown:"""
             }
         ]
 
-        print(f"Generating {num_questions} questions from topic...")
-
-        # Ultra-reduced max_tokens to work within credit limits
-        max_tokens_needed = min(800, (num_questions * 150))
-
-        response_text = None
-        try:
-            response_text = call_ai_model(messages, temperature=0.7, max_tokens=max_tokens_needed)
-        except Exception as ai_error:
-            # If we hit credit limits, try with even fewer tokens
-            if "402" in str(ai_error) or "credits" in str(ai_error).lower():
-                print("Hit credit limit, trying with reduced tokens...")
-                max_tokens_needed = min(500, (num_questions * 100))
-                try:
-                    response_text = call_ai_model(messages, temperature=0.7, max_tokens=max_tokens_needed)
-                except Exception as e:
-                    raise Exception(f"Failed even with reduced tokens: {str(e)}")
-            else:
-                raise ai_error
+        # Call Azure OpenAI
+        response_text = call_azure_openai(messages, temperature=0.7, max_tokens=2000)
 
         if not response_text:
             raise Exception("No response received from AI model")
 
         print(f"AI Response received: {len(response_text)} characters")
 
-        # Clean response
+        # Clean response - remove markdown code blocks if present
         response_text = response_text.strip()
 
-        if '```' in response_text:
-            parts = response_text.split('```')
-            for part in parts:
-                part = part.strip()
-                if part.startswith('json'):
-                    response_text = part[4:].strip()
-                    break
-                elif part.startswith('['):
-                    response_text = part
-                    break
+        # Remove markdown code blocks
+        if '```json' in response_text:
+            response_text = response_text.split('```json')[1].split('```')[0].strip()
+        elif '```' in response_text:
+            response_text = response_text.split('```')[1].split('```')[0].strip()
 
         # Parse JSON
         try:
@@ -352,7 +442,7 @@ Return ONLY valid JSON array, no markdown:"""
             print(f"Response text: {response_text[:500]}")
             return jsonify({
                 "success": False,
-                "error": "Failed to parse AI response. Please try again.",
+                "error": "Failed to parse AI response as JSON",
                 "details": str(e)
             }), 500
 
@@ -360,67 +450,77 @@ Return ONLY valid JSON array, no markdown:"""
         if not isinstance(questions, list) or len(questions) == 0:
             return jsonify({
                 "success": False,
-                "error": "Invalid response from AI"
+                "error": "Invalid response format from AI"
             }), 500
 
-        # Validate and clean each question (remove explanation if present)
-        cleaned_questions = []
+        # Validate and clean each question
+        validated_questions = []
         for i, q in enumerate(questions):
             if not isinstance(q, dict) or 'question' not in q or 'correct_answer' not in q:
-                print(f"Question {i+1} is invalid - missing required fields")
+                print(f"Question {i+1} missing required fields, skipping")
                 continue
 
-            # Validate question type matches request
+            # Type-specific validation
             options = q.get('options', [])
             is_valid = False
 
             if question_type == 'identification':
-                # Identification must have empty or no options
+                # Must have empty or no options
                 if not options or len(options) == 0:
                     is_valid = True
-                else:
-                    print(f"Skipping question {i+1}: Expected identification (no options) but got {len(options)} options")
+                    q['options'] = []  # Ensure empty array
+
             elif question_type == 'true-false':
-                # True/false must have exactly 2 options
+                # Must have exactly 2 options: True and False
                 if len(options) == 2:
+                    # Normalize to ensure exact format
+                    q['options'] = ["True", "False"]
+                    # Normalize answer
+                    if q['correct_answer'].lower() in ['true', 't', 'yes']:
+                        q['correct_answer'] = "True"
+                    else:
+                        q['correct_answer'] = "False"
                     is_valid = True
-                else:
-                    print(f"Skipping question {i+1}: Expected true-false (2 options) but got {len(options)} options")
+
             elif question_type == 'multiple-choice':
-                # Multiple choice must have 3+ options
-                if len(options) >= 3:
-                    is_valid = True
-                else:
-                    print(f"Skipping question {i+1}: Expected multiple-choice (3+ options) but got {len(options)} options")
+                # Must have exactly 4 options
+                if len(options) == 4:
+                    # Ensure answer is a single letter A-D
+                    answer = q['correct_answer'].strip().upper()
+                    if answer in ['A', 'B', 'C', 'D']:
+                        q['correct_answer'] = answer
+                        is_valid = True
 
             if not is_valid:
+                print(f"Question {i+1} failed validation for type {question_type}, skipping")
                 continue
 
-            # Clean and add the question
-            cleaned_q = {
+            # Add validated question
+            validated_questions.append({
                 'question': q['question'],
-                'options': options,
+                'options': q['options'],
                 'correct_answer': q['correct_answer'],
                 'type': question_type
-            }
-            cleaned_questions.append(cleaned_q)
+            })
 
-        if len(cleaned_questions) == 0:
+        if len(validated_questions) == 0:
             return jsonify({
                 "success": False,
-                "error": f"AI generated wrong question type. Expected {question_type} but got different format."
+                "error": f"No valid {question_type} questions were generated. Please try again."
             }), 500
 
-        print(f"Successfully generated {len(cleaned_questions)} questions")
+        print(f"Successfully validated {len(validated_questions)} questions")
 
         return jsonify({
             "success": True,
-            "questions": cleaned_questions,
-            "count": len(cleaned_questions)
+            "questions": validated_questions,
+            "count": len(validated_questions)
         })
 
     except Exception as e:
         print(f"Error in generate_questions: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             "success": False,
             "error": "Question generation failed",
@@ -428,110 +528,24 @@ Return ONLY valid JSON array, no markdown:"""
         }), 500
 
 
-@app.route("/api/ai/evaluate-difficulty", methods=["POST"])
-def evaluate_difficulty():
-    """Analyze and rate the difficulty of a question"""
-    try:
-        data = request.json
-        question = data.get('question', '')
-        options = data.get('options', [])
-
-        if not question:
-            return jsonify({"success": False, "error": "No question provided"}), 400
-
-        prompt = f"""Rate this question's difficulty (1-10):
-
-Question: {question}
-Options: {', '.join(options) if options else 'N/A'}
-
-Return ONLY JSON:
-{{
-  "score": 7,
-  "level": "medium",
-  "reasoning": "Brief explanation"
-}}"""
-
-        messages = [{"role": "user", "content": prompt}]
-        response_text = call_ai_model(messages, temperature=0.3, max_tokens=200)
-
-        response_text = response_text.strip()
-        if '```' in response_text:
-            response_text = response_text.split('```')[1].replace('json', '').strip()
-
-        result = json.loads(response_text)
-
-        return jsonify({
-            "success": True,
-            "evaluation": result
-        })
-
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": "Evaluation failed",
-            "details": str(e)
-        }), 500
-
-
-@app.route("/api/ai/improve-question", methods=["POST"])
-def improve_question():
-    """Suggest improvements for an exam question"""
-    try:
-        data = request.json
-        question = data.get('question', '')
-
-        if not question:
-            return jsonify({"success": False, "error": "No question provided"}), 400
-
-        prompt = f"""Improve this question:
-
-{question}
-
-Return ONLY JSON:
-{{
-  "improved_question": "Improved version",
-  "changes": "What changed",
-  "tips": "Writing tips"
-}}"""
-
-        messages = [{"role": "user", "content": prompt}]
-        response_text = call_ai_model(messages, temperature=0.7, max_tokens=400)
-
-        response_text = response_text.strip()
-        if '```' in response_text:
-            response_text = response_text.split('```')[1].replace('json', '').strip()
-
-        result = json.loads(response_text)
-
-        return jsonify({
-            "success": True,
-            "improvement": result
-        })
-
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": "Improvement failed",
-            "details": str(e)
-        }), 500
-
-
 if __name__ == "__main__":
     print("\n" + "="*60)
-    print("🚀 ExamBits AI Service Starting (Topic-Based Generation)...")
+    print("🚀 ExamBits AI Service Starting (Azure OpenAI + Validation)...")
     print("="*60)
 
-    if not OPENROUTER_API_KEY:
-        print("❌ ERROR: OPENROUTER_API_KEY not found in .env file")
-        print("📝 Please create server/.env and add your OpenRouter API key")
+    if not AZURE_OPENAI_ENDPOINT or not AZURE_OPENAI_API_KEY:
+        print("❌ ERROR: Azure OpenAI credentials not configured")
+        print("📝 Please set AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY in .env")
         print("="*60)
         exit(1)
 
-    print(f"✅ AI Service: {AI_SERVICE}")
-    print(f"✅ Model: {AI_MODEL}")
-    print(f"✅ API Key: {'*' * 40}{OPENROUTER_API_KEY[-8:]}")
+    print(f"✅ AI Service: Azure OpenAI")
+    print(f"✅ Endpoint: {AZURE_OPENAI_ENDPOINT}")
+    print(f"✅ Deployment: {AZURE_OPENAI_DEPLOYMENT}")
+    print(f"✅ API Version: {AZURE_API_VERSION}")
     print(f"✅ Server: http://localhost:5000")
-    print(f"✅ Method: Topic Extraction (Token Optimized)")
+    print(f"✅ PDF Validation: Enabled (pdfplumber)")
+    print(f"✅ Test Connection: http://localhost:5000/api/ai/test-connection")
     print("="*60 + "\n")
 
     app.run(host='0.0.0.0', port=5000, debug=True)
