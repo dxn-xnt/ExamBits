@@ -1,32 +1,48 @@
+# Logs and system files
 *.log
 .DS_Store
-frontend-laravel/.env
-frontend-laravel/.env.backup
-frontend-laravel/.env.production
+Thumbs.db
+
+# Python virtual environments
+.venv/
+server/.venv/
+
+# IDE / Editor folders
+.idea/
+server/.idea/
+frontend-laravel/.idea/
+frontend-laravel/.vscode/
 frontend-laravel/.phpactor.json
 frontend-laravel/.phpunit.result.cache
 /frontend-laravel/.fleet
-/frontend-laravel/.idea
 /frontend-laravel/.nova
 /frontend-laravel/.phpunit.cache
-/frontend-laravel/.vscode
 /frontend-laravel/.zed
+/frontend-laravel/workspace.xml
+
+# Laravel environment files
+frontend-laravel/.env
+frontend-laravel/.env.backup
+frontend-laravel/.env.production
 /frontend-laravel/auth.json
-/frontend-laravel/node_modules
-/frontend-laravel/public/build
-/frontend-laravel/public/hot
-/frontend-laravel/public/storage
-/frontend-laravel/storage/*.key
-/frontend-laravel/storage/pail
-/frontend-laravel/vendor
+
+# Laravel vendor / storage / build / node_modules
+frontend-laravel/vendor/
+frontend-laravel/node_modules/
+frontend-laravel/public/build/
+frontend-laravel/public/hot/
+frontend-laravel/public/storage/
+frontend-laravel/storage/*.key
+frontend-laravel/storage/pail/
+
+# Laravel Homestead
 frontend-laravel/Homestead.json
 frontend-laravel/Homestead.yaml
-/frontend-laravel/Thumbs.db
-/frontend-laravel/resources/js/routes/
 
-# Default ignored files
+# Laravel JS resources (optional)
+/frontend-laravel/resources/js/routes/
+frontend-laravel/resources/js/actions/
+
+# Server default ignored files
 /server/shelf/
-/server/workspace.xml
-# Editor-based HTTP Client requests
 /server/httpRequests/
-/frontend-laravel/resources/js/actions/

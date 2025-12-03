@@ -1,36 +1,42 @@
+# Logs and system files
 *.log
 .DS_Store
+Thumbs.db
+
+# Environment files
 .env
 .env.backup
 .env.production
+/auth.json
+
+# IDE / Editor files
+.idea/
 .phpactor.json
 .phpunit.result.cache
 /.fleet
-/.idea
 /.nova
 /.phpunit.cache
 /.vscode
 /.zed
-/auth.json
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
-Homestead.json
-Homestead.yaml
-Thumbs.db
-# Python venv
-.venv/
-server/.venv/
 
-# IDE files
-.idea/
-
-# Node / build junk just in case
+# Node / build files
 node_modules/
 dist/
 build/
+/public/build
+/public/hot
+/public/storage
 /resources/js/routes/
+
+# Python virtual environments
+.venv/
+server/.venv/
+
+# Laravel / server storage
+/storage/*.key
+/storage/pail
+/vendor
+
+# Homestead
+Homestead.json
+Homestead.yaml

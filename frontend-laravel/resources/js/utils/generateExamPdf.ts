@@ -16,7 +16,7 @@ type QuestionData = {
 type ExamData = {
     id: number;
     title: string;
-    topics: string[];
+    topic: string;
     difficulty: string;
     extracted_topic?: string;
 };
@@ -86,11 +86,6 @@ export const generateExamPdf = (exam: ExamData, questions: QuestionData) => {
         });
     }
 
-    // Format topics
-    const topicsString = exam.topics.map(topic =>
-        topic.replace(/([A-Z])/g, ' $1').trim()
-    ).join(', ');
-
     // Helper function to check if we need a new page
     const checkNewPage = (requiredSpace: number) => {
         if (yPosition + requiredSpace > pageHeight - margin) {
@@ -121,7 +116,7 @@ export const generateExamPdf = (exam: ExamData, questions: QuestionData) => {
 
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
-    const topicInfo = `Topic: ${topicsString} | Difficulty: ${exam.difficulty}`;
+    const topicInfo = `Topic: ${exam.extracted_topic} | Difficulty: ${exam.difficulty}`;
     pdf.text(topicInfo, pageWidth / 2, yPosition, { align: 'center' });
     yPosition += 5;
 
@@ -294,11 +289,21 @@ export const generateExamPdf = (exam: ExamData, questions: QuestionData) => {
 
             let answerText = '';
 
-            if (testType.type === 'multiple' && question.choices) {
-                const answerIndex = question.choices.indexOf(question.answer);
-                const answerLetter = answerIndex !== -1 ? letters[answerIndex].toUpperCase() : 'N/A';
-                answerText = `${qIndex + 1}. ${answerLetter}. ${question.answer}`;
+            if (testType.type === 'multiple') {
+                // For multiple choice, the answer is already stored as a letter (A, B, C, D)
+                // We need to find the actual choice text based on the letter
+                const answerLetter = question.answer.toUpperCase();
+                const letterIndex = answerLetter.charCodeAt(0) - 65; // Convert A->0, B->1, C->2, D->3
+
+                if (question.choices && letterIndex >= 0 && letterIndex < question.choices.length) {
+                    const answerChoice = question.choices[letterIndex];
+                    answerText = `${qIndex + 1}. ${answerLetter}. ${answerChoice}`;
+                } else {
+                    // Fallback if choices not available or index out of range
+                    answerText = `${qIndex + 1}. ${answerLetter}`;
+                }
             } else {
+                // For true/false and identification, just show the answer
                 answerText = `${qIndex + 1}. ${question.answer}`;
             }
 

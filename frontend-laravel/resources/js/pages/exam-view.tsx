@@ -18,7 +18,8 @@ type Option = {
 type ExamData = {
     id: number;
     title: string;
-    topics: string[];
+    topic: string;
+    question_types: string[]; // Question types selected
     difficulty: string;
     extracted_topic?: string;
 };
@@ -64,14 +65,7 @@ function generateOptions(data: QuestionData) {
 }
 
 export default function ExamView({ exam, questions }: Props) {
-    const questionData: QuestionData = {
-        multiple: [],
-        trueOrFalse: [],
-        identification: [],
-    };
-
     const options = generateOptions(questions);
-    console.log(options);
 
     const getInitialSelected = () => {
         if (questions.multiple.length > 0) return "multiple";
@@ -207,12 +201,8 @@ export default function ExamView({ exam, questions }: Props) {
                             <p className="text-md font-semibold text-foreground">{exam.difficulty}</p>
                         </div>
                         <div className="flex flex-row w-fit space-x-1">
-                            <p className="text-md text-foreground">Topics:</p>
-                            {exam.topics.map((topic, index) => (
-                                <p className="text-md font-semibold text-foreground" key={index}>
-                                    {topic.replace(/([A-Z])/g, ' $1').trim()}{index !== exam.topics.length - 1 && ','}
-                                </p>
-                            ))}
+                            <p className="text-md text-foreground">Topic:</p>
+                            <p className="text-md font-semibold text-foreground">{exam.extracted_topic}</p>
                         </div>
                     </div>
                 </div>
@@ -222,7 +212,6 @@ export default function ExamView({ exam, questions }: Props) {
                     <div className="flex flex-col md:flex-row sm:gap-8 w-full gap-4">
                         <div className="flex flex-col w-full md:w-[24%] gap-2">
                             {options.map((option) => {
-
                                 return (
                                     <RadioButton
                                         key={option.id}

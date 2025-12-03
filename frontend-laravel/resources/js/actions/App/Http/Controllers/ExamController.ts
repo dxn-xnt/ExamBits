@@ -302,7 +302,7 @@ export const generate = {
 
 /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:271
+ * @see app/Http/Controllers/ExamController.php:275
  * @route '/exam-generator/export/{examId}'
  */
 export const exportMethod = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -317,7 +317,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:271
+ * @see app/Http/Controllers/ExamController.php:275
  * @route '/exam-generator/export/{examId}'
  */
 exportMethod.url = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -345,7 +345,7 @@ exportMethod.url = (args: { examId: string | number } | [examId: string | number
 
 /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:271
+ * @see app/Http/Controllers/ExamController.php:275
  * @route '/exam-generator/export/{examId}'
  */
 exportMethod.get = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -354,7 +354,7 @@ exportMethod.get = (args: { examId: string | number } | [examId: string | number
 })
 /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:271
+ * @see app/Http/Controllers/ExamController.php:275
  * @route '/exam-generator/export/{examId}'
  */
 exportMethod.head = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -364,7 +364,7 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
 
     /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:271
+ * @see app/Http/Controllers/ExamController.php:275
  * @route '/exam-generator/export/{examId}'
  */
     const exportMethodForm = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -374,7 +374,7 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
 
             /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:271
+ * @see app/Http/Controllers/ExamController.php:275
  * @route '/exam-generator/export/{examId}'
  */
         exportMethodForm.get = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -383,7 +383,7 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
         })
             /**
 * @see \App\Http\Controllers\ExamController::exportMethod
- * @see app/Http/Controllers/ExamController.php:271
+ * @see app/Http/Controllers/ExamController.php:275
  * @route '/exam-generator/export/{examId}'
  */
         exportMethodForm.head = (args: { examId: string | number } | [examId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -399,7 +399,7 @@ exportMethod.head = (args: { examId: string | number } | [examId: string | numbe
     exportMethod.form = exportMethodForm
 /**
 * @see \App\Http\Controllers\ExamController::updateTitle
- * @see app/Http/Controllers/ExamController.php:258
+ * @see app/Http/Controllers/ExamController.php:262
  * @route '/exam/{id}/update-title'
  */
 export const updateTitle = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -414,7 +414,7 @@ updateTitle.definition = {
 
 /**
 * @see \App\Http\Controllers\ExamController::updateTitle
- * @see app/Http/Controllers/ExamController.php:258
+ * @see app/Http/Controllers/ExamController.php:262
  * @route '/exam/{id}/update-title'
  */
 updateTitle.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -442,7 +442,7 @@ updateTitle.url = (args: { id: string | number } | [id: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\ExamController::updateTitle
- * @see app/Http/Controllers/ExamController.php:258
+ * @see app/Http/Controllers/ExamController.php:262
  * @route '/exam/{id}/update-title'
  */
 updateTitle.patch = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -452,7 +452,7 @@ updateTitle.patch = (args: { id: string | number } | [id: string | number ] | st
 
     /**
 * @see \App\Http\Controllers\ExamController::updateTitle
- * @see app/Http/Controllers/ExamController.php:258
+ * @see app/Http/Controllers/ExamController.php:262
  * @route '/exam/{id}/update-title'
  */
     const updateTitleForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -467,7 +467,7 @@ updateTitle.patch = (args: { id: string | number } | [id: string | number ] | st
 
             /**
 * @see \App\Http\Controllers\ExamController::updateTitle
- * @see app/Http/Controllers/ExamController.php:258
+ * @see app/Http/Controllers/ExamController.php:262
  * @route '/exam/{id}/update-title'
  */
         updateTitleForm.patch = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
