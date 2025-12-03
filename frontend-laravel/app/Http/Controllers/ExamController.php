@@ -80,9 +80,15 @@ class ExamController extends Controller
                 ->post("{$this->flaskUrl}/api/ai/extract-pdf");
 
             if (!$pdfResponse->successful()) {
+                $apiError = $pdfResponse->json()['error'] ?? 'Failed to extract PDF content. Please try again.';
+
                 Log::error('PDF extraction failed', ['response' => $pdfResponse->json()]);
-                return back()->with('error', 'Failed to extract PDF content. Please try again.');
+
+                return redirect()->back()->withErrors([
+                    'general' => $apiError
+                ]);
             }
+
 
             $pdfData = $pdfResponse->json();
             $content = $pdfData['content'];
@@ -207,6 +213,10 @@ class ExamController extends Controller
 
             return back()->with('error', 'Failed to generate exam: ' . $e->getMessage());
         }
+    }
+
+    public function generating(){
+        return Inertia::render('loader-screen',[]);
     }
 
     public function view($id)

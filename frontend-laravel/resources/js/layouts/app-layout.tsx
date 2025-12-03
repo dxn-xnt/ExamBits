@@ -12,10 +12,9 @@ interface AppLayoutProps {
 
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
     <AppShell variant="header">
-        <AppContent variant="header" className="overflow-x-auto">
+        <AppContent variant="header" className="overflow-x-hidden">
             <AppHeader breadcrumbs={breadcrumbs}/>
             {children}
-            <AppFooter/>
         </AppContent>
     </AppShell>
 );

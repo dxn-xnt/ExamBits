@@ -1,14 +1,17 @@
 import {Button} from "@/components/ui/button";
 import {Download, FileUp, Icon, Sliders, WandSparkles} from "lucide-react";
 import GenerateExamForm from "@/pages/form/generate-exam-form";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import AppLayout from "@/layouts/app-layout";
+import { UploadCloud, Settings2, Edit3, FileDown } from "lucide-react";
+import {AppFooter} from "@/components/app-footer";
+import AlertError from "@/components/alert-error";
 
 const features = [
     {
         icon: FileUp,
-        title: 'Upload Any Document',
-        description: 'Support for PDF, Word, PowerPoint, and text files'
+        title: 'Upload Document',
+        description: 'Support for PDF, Word, and text files'
     },
     {
         icon: WandSparkles,
@@ -18,20 +21,59 @@ const features = [
     {
         icon: Sliders,
         title: 'Customizable Options',
-        description: 'Choose question types, difficulty levels, and exam length'
+        description: 'Choose question types and difficulty levels'
     },
     {
         icon: Download,
         title: 'Export & Share',
-        description: 'Download exams as PDF or share them instantly'
+        description: 'Download exam test sheet as PDF'
     }
 ]
-export default function LandingPage() {
+
+const steps = [
+    {
+        icon: UploadCloud,
+        title: 'Upload Your Document',
+        description: 'Exambits analyzes the content instantly using AI.'
+    },
+    {
+        icon: Settings2,
+        title: 'Choose Question Types and Difficulty',
+        description: 'Select the question format and difficulty level you want generated.'
+    },
+    {
+        icon: Edit3,
+        title: 'Review and Edit Exam Title',
+        description: 'Customize the generated exam title or make quick review before exporting.'
+    },
+    {
+        icon: FileDown,
+        title: 'Export Test Sheet',
+        description: 'Download your completed exam in PDF or DOCX format, ready for printing or sharing.'
+    }
+];
+
+export default function LandingPage({ errors }: { errors?: Record<string, string> }) {
     const [showForm, setShowForm] = useState(false);
+    const [localErrors, setLocalErrors] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (errors) {
+            setLocalErrors(Object.values(errors));
+        }
+    }, [errors]);
+
     return (
         <AppLayout>
-            <div className="flex flex-col h-full w-full py-6">
-                <section id="generate-exam" className="flex h-screen flex-col items-center justify-center gap-4 text-center">
+            {localErrors.length > 0 && (
+                <AlertError
+                    errors={localErrors}
+                    duration={5000}           // 5 seconds
+                    onClose={() => setLocalErrors([])}
+                />
+            )}
+            <div className="flex flex-col h-full w-screen py-6">
+                <section id="generate-exam" className="flex h-[600px] flex-col items-center justify-center gap-4 text-center px-4 mt-20">
                     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="1" y="1" width="54" height="54" rx="27" stroke="black" stroke-width="2"/>
                         <path d="M18.8334 31.6665C15.7958 31.6665 13.3334 34.1289 13.3334 37.1665C13.3334 40.2041 15.7958 42.6665 18.8334 42.6665C19.4762 42.6665 20.0933 42.5562 20.6667 42.3535" stroke="#131927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -47,12 +89,15 @@ export default function LandingPage() {
                         <path d="M40.2222 35.3335L37.1667 40.8335H44.5L41.4445 46.3335" stroke="#131927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
 
-                    <h1 className="text-4xl font-semibold text-gray-900">AI-Powered Exam Generator</h1>
+                    <h1 className="text-4xl font-semibold text-gray-900 whitespace-normal break-words w-full max-w-[700px]">
+                        AI-Powered Exam Generator
+                    </h1>
+
                     <p>Generate smarter and effortless exams instantly</p>
                     <Button
                         variant="outline"
                         size="lg"
-                        className="my-6"
+                        className="my-6 hover:bg-accent-blue"
                         onClick={() => setShowForm((prev) => !prev)}
                     >
                         Generate exam
@@ -63,11 +108,11 @@ export default function LandingPage() {
                     {showForm && (
                         <div
                             className="fixed inset-0 bg-black/50 z-2"
-                            onClick={() => setShowForm(false)} // close form when overlay clicked
+                            onClick={() => setShowForm(false)}
                         />
                     )}
                 </section>
-                <section id="features" data-name="features" className="flex flex-1 h-screen w-screen flex-col items-center justify-center gap-4 px-20 py-20">
+                <section id="features" data-name="features" className="flex flex-1 h-screen w-screen flex-col items-center justify-center gap-4 px-20 py-20 sm:py-40 bg-accent-blue border-b-2 border-t-2 border-card-foreground">
                     <div className="text-center mb-12">
                         <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
                             Powerful Features
@@ -78,7 +123,7 @@ export default function LandingPage() {
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {features.map((feature, index) => (
-                            <div key={index} className="card text-center hover:shadow-lg transition-shadow px-4 py-12 border-3 border-foreground rounded-3xl">
+                            <div key={index} className="card bg-background text-center hover:shadow-lg transition-shadow px-4 py-12 border-3 border-foreground rounded-3xl">
                                 <div className="w-16 h-16 bg-[var(--secondary-color)] rounded-xl flex items-center justify-center mx-auto mb-4">
                                     <feature.icon className="h-10 w-10"/>
                                 </div>
@@ -88,7 +133,29 @@ export default function LandingPage() {
                         ))}
                     </div>
                 </section>
+                <section id="how-it-works" data-name="how-it-works" className="flex flex-1 h-screen w-screen flex-col items-center justify-center gap-4 px-20 py-22">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
+                            How It Works
+                        </h2>
+                        <p className="text-lg text-[var(--text-secondary)]">
+                            Exambits makes exam creation fast, accurate, and effortless. In just a few clicks, you can generate high-quality questions tailored to any topic.
+                        </p>
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {steps.map((step, index) => (
+                            <div key={index} className="card text-center transition-shadow px-4 py-12 border-foreground">
+                                <div className="w-20 h-20 bg-accent-blue hover:shadow-lg rounded-2xl border-3 border-card-foreground flex items-center justify-center mx-auto mb-4">
+                                    <step.icon className="h-10 w-10"/>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+                                <p className="text-[var(--text-secondary)]">{step.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
             </div>
+            <AppFooter/>
         </AppLayout>
     );
 }
