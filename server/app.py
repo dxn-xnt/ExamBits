@@ -341,7 +341,6 @@ def generate_questions():
         num_questions = int(data.get('num_questions', 10))
         difficulty = data.get('difficulty', 'medium')
         question_type = data.get('type', 'multiple-choice')
-
         # Validation
         if not content or len(content.strip()) < 100:
             return jsonify({
