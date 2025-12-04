@@ -80,7 +80,6 @@ export default function GenerateExamForm() {
     };
 
     const handleClose = () => {
-        // Go back or redirect to exam generator index
         window.history.back();
     };
 
@@ -101,12 +100,6 @@ export default function GenerateExamForm() {
                             </Button>
                         </FieldHeader>
                         <FieldContent>
-                            {error && (
-                                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                                    {error}
-                                </div>
-                            )}
-
                             <Field>
                                 <FieldLabel htmlFor="difficulty">
                                     Difficulty
@@ -150,11 +143,11 @@ export default function GenerateExamForm() {
 
                             <Field>
                                 <FieldLabel htmlFor="file-upload">
-                                    Upload Material (PDF)
+                                    Upload Material
                                 </FieldLabel>
                                 <FileUpload
                                     onFileSelect={setFile}
-                                    accept=".pdf"
+                                    accept=".pdf,.doc,.docx,.txt"
                                     maxSize={10}
                                     value={file}
                                 />

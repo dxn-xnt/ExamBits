@@ -1,5 +1,4 @@
 import re
-
 import numpy as np
 import pdfplumber
 from nltk import sent_tokenize

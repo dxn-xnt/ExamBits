@@ -7,8 +7,10 @@
 
         <title inertia>{{ config('app.name', 'ExamBits') }}</title>
 
-        <link rel="icon" href="/public/ExamBitsLogo.svg" sizes="any">
-        <link rel="icon" href="/public/ExamBitsLogo.svg" type="image/svg+xml">
+        <link rel="icon" href="/frontend-laravel/public/ExamBitsLogo.svg" sizes="any">
+        <link rel="icon" href="/frontend-laravel/public/ExamBitsLogo.svg" type="image/svg+xml">
+        <link rel="icon" href="/frontend-laravel/public/favicon.ico" type="image/png">
+
         <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 
 
