@@ -102,9 +102,11 @@ class ExamController extends Controller
             Log::info('Step 2: Analyzing main topic from content');
 
             $topicResponse = Http::timeout(90)
+                ->withHeaders(['Accept' => 'application/json'])
                 ->post("{$this->flaskUrl}/api/ai/analyze-topic", [
                     'content' => $content
                 ]);
+
 
             if (!$topicResponse->successful()) {
                 Log::error('Topic analysis failed', ['response' => $topicResponse->json()]);

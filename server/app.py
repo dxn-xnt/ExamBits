@@ -91,6 +91,7 @@ def call_azure_openai(messages, temperature=0.7, max_tokens=2000):
 
 def extract_topic_from_text(text):
     """Extract the main topic/subject from the text content"""
+    print(f"[DEBUG] Sending text to Azure OpenAI ({len(text)} chars)")
     # Take first 2000 characters for topic analysis
     sample_text = text[:2000] if len(text) > 2000 else text
 

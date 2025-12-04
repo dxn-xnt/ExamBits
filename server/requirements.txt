@@ -1,0 +1,5 @@
+Flask
+flask_cors
+PyPDF2
+openai
+requests
