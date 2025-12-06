@@ -65,7 +65,7 @@ function FieldFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="field-footer"
       className={cn(
-        "group/field-group @container/field-group flex w-full flex-row py-3 px-4 border-t-2 border-card-foreground justify-end",
+        "group/field-group @container/field-group flex w-full flex-row py-3 px-4 pb-4 border-t-2 border-card-foreground justify-end",
         className
       )}
       {...props}

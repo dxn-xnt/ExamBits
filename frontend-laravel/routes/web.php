@@ -11,45 +11,36 @@ use App\Http\Controllers\PublishController;
 Route::get('/', [ExamController::class, 'index'])
     ->name('home');
 
+Route::get('/login', [UserController::class, 'index'])->name('user.login');
+Route::post('/login', [UserController::class, 'store'])->name('user.login.store');
+
+Route::get('/signup', [UserController::class, 'signup'])->name('user.signup');
+Route::get('/signup', [UserController::class, 'store'])->name('user.signup.store');
 
 // Exam Generator Routes
 Route::prefix('exam-generator')->group(function () {
-    Route::get('/login', [UserController::class, 'login'])
-        ->name('user.login');
-
-    Route::get('/signup', [UserController::class, 'signup'])
-        ->name('user.signup');
-
-    // Dashboard - List all exams
-    Route::get('/', [ExamController::class, 'index'])
-        ->name('exam.index');
+    // Dashboard
+    Route::get('/', [ExamController::class, 'index'])->name('exam.index');
 
     // Show generate form (GET) & Handle generation (POST)
-    Route::get('/generate', [ExamController::class, 'generate'])
-        ->name('exam.generate-form');
-
-    Route::post('/generate', [ExamController::class, 'generate'])
-        ->name('exam.generate-exam');
-
-    Route::get('/generating', [ExamController::class, 'generating'])
-        ->name('exam.generating-screen');
+    Route::get('/generate', [ExamController::class, 'generate'])->name('exam.generate-form');
+    Route::post('/generate', [ExamController::class, 'generate'])->name('exam.generate-exam');
 
     // View generated exam - NOW USES QuestionController
-    Route::get('/view/{id}', [QuestionController::class, 'index'])
-        ->name('exam.view');
+    Route::get('/view/{id}', [QuestionController::class, 'index'])->name('exam.view');
 
     // Export generated exam (PDF / Word / etc.)
-    Route::get('/export/{examId}', [ExamController::class, 'export'])
-        ->name('exam.export');
+    Route::get('/export/{examId}', [ExamController::class, 'export'])->name('exam.export');
 
     // Publish exam - Generate PDF
-    Route::get('/publish/{examId}', [PublishController::class, 'generatePdf'])
-        ->name('exam.publish');
+    Route::get('/publish/{examId}', [PublishController::class, 'generatePdf'])->name('exam.publish');
 
     // Generate Answer Key PDF
-    Route::get('/answer-key/{examId}', [PublishController::class, 'generateAnswerKey'])
-        ->name('exam.answer-key');
+    Route::get('/answer-key/{examId}', [PublishController::class, 'generateAnswerKey'])->name('exam.answer-key');
 });
+
+Route::get('/exam-library', [ExamController::class, 'showAllExam'])->name('exam.showAllExam');
+
 
 // Update exam title - MOVED OUTSIDE exam-generator prefix
 Route::patch('/exam/{id}/update-title', [ExamController::class, 'updateTitle'])

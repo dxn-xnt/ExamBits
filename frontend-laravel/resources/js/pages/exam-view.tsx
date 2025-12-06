@@ -142,15 +142,15 @@ export default function ExamView({ exam, questions }: Props) {
         <AppLayout>
             <div className="flex flex-1 min-h-[620px] mt-20 flex-col items-center justify-start gap-3 rounded-xl px-10 pb-10">
                 <div className="flex flex-row w-full justify-between">
-                    <Button variant="fit" size="xs" onClick={handleBack}>
+                    <Button variant="fit" size="xs" className="shadow-[4px_4px_0_#000000] transition-all hover:-translate-y-0.5" onClick={handleBack}>
                         <ArrowLeft />
                     </Button>
-                    <Button variant="fit" size="xs" onClick={handlePublish}>
+                    <Button variant="fit" size="xs" className="shadow-[4px_4px_0_#000000] transition-all hover:-translate-y-0.5" onClick={handlePublish}>
                         Publish
                     </Button>
                 </div>
 
-                <div className="flex flex-col w-full border-2 border-card-foreground rounded-md gap-1 px-3 py-2">
+                <div className="flex flex-col w-full border-2 border-card-foreground rounded-md shadow-[6px_6px_0_#000000] gap-1 px-3 py-2">
                     <div className="flex flex-row w-full gap-3 items-center">
                         {isEditingTitle ? (
                             <>
@@ -207,10 +207,10 @@ export default function ExamView({ exam, questions }: Props) {
                     </div>
                 </div>
 
-                <div className="flex flex-col w-full gap-2">
+                <div className="flex flex-col w-full gap-2 mt-3">
                     <h2 className="font-medium text-md">Test Types</h2>
-                    <div className="flex flex-col md:flex-row sm:gap-8 w-full gap-4">
-                        <div className="flex flex-col w-full md:w-[24%] gap-2">
+                    <div className="flex flex-col md:flex-row gap-8 sm:gap-4 w-full ">
+                        <div className="flex flex-col w-full md:w-[24%] gap-3">
                             {options.map((option) => {
                                 return (
                                     <RadioButton
@@ -225,7 +225,7 @@ export default function ExamView({ exam, questions }: Props) {
 
                         <div className="flex flex-col w-full md:w-[50%]">
                             {selected === "multiple" && questions.multiple.length > 0 ? (
-                                <section id="multiple" className="flex w-full flex-col gap-3">
+                                <section id="multiple" className="flex w-full flex-col gap-4">
                                     {questions.multiple.map((questionProps, index) => (
                                         <MultipleChoice key={questionProps.id} index={index} data={questionProps} />
                                     ))}

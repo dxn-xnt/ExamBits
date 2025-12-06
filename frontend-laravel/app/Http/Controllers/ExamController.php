@@ -295,9 +295,9 @@ class ExamController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function showAllExam()
     {
-        //
+        return Inertia::render('exam-library', []);
     }
 
     public function edit(Exam $exam)
