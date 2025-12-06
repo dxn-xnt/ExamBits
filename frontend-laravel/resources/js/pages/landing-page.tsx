@@ -53,7 +53,7 @@ const steps = [
     }
 ];
 
-export default function LandingPage({ errors }: { errors?: Record<string, string> }) {
+export default function LandingPage({ errors, isUser }: { errors?: Record<string, string>, isUser: boolean }) {
     const [showForm, setShowForm] = useState(false);
     const [localErrors, setLocalErrors] = useState<string[]>([]);
 
@@ -63,18 +63,28 @@ export default function LandingPage({ errors }: { errors?: Record<string, string
         }
     }, [errors]);
 
+    const handleGenerateClick = () => {
+        // if (!isUser) {
+        //     // redirect to login if no user
+        //     window.location.href = "/login";
+        //     return;
+        // }
+        setShowForm(true);
+    };
+
     return (
         <AppLayout>
             {localErrors.length > 0 && (
                 <AlertError
+                    title="Error Extracting Text"
                     errors={localErrors}
-                    duration={5000}           // 5 seconds
+                    duration={6000}           // 5 seconds
                     onClose={() => setLocalErrors([])}
                 />
             )}
             <div className="flex flex-col h-full w-screen py-6">
                 <section id="generate-exam" className="flex h-[600px] flex-col items-center justify-center gap-4 text-center px-4 mt-20">
-                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="80" height="80" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="1" y="1" width="54" height="54" rx="27" stroke="black" stroke-width="2"/>
                         <path d="M18.8334 31.6665C15.7958 31.6665 13.3334 34.1289 13.3334 37.1665C13.3334 40.2041 15.7958 42.6665 18.8334 42.6665C19.4762 42.6665 20.0933 42.5562 20.6667 42.3535" stroke="#131927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M13.8167 34.6087C11.3607 33.4236 9.66627 30.9098 9.66627 28.0002C9.66627 25.7789 10.654 23.7882 12.2141 22.4434" stroke="#131927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -89,16 +99,16 @@ export default function LandingPage({ errors }: { errors?: Record<string, string
                         <path d="M40.2222 35.3335L37.1667 40.8335H44.5L41.4445 46.3335" stroke="#131927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
 
-                    <h1 className="text-4xl font-semibold text-gray-900 whitespace-normal break-words w-full max-w-[700px]">
+                    <h1 className="text-6xl font-semibold text-gray-900 whitespace-normal break-words w-full max-w-[700px] sm:max-w-full mt-6">
                         AI-Powered Exam Generator
                     </h1>
 
-                    <p>Generate smarter and effortless exams instantly</p>
+                    <p className="text-lg">Generate smarter and effortless exams instantly</p>
                     <Button
                         variant="outline"
                         size="lg"
-                        className="my-6 hover:bg-accent-blue"
-                        onClick={() => setShowForm((prev) => !prev)}
+                        className="my-6 shadow-[4px_4px_0_#000000] transition-all hover:-translate-y-0.5 text-xl py-5 hover:bg-accent-blue"
+                        onClick={handleGenerateClick}
                     >
                         Generate exam
                     </Button>
@@ -107,7 +117,7 @@ export default function LandingPage({ errors }: { errors?: Record<string, string
                     }
                     {showForm && (
                         <div
-                            className="fixed inset-0 bg-black/50 z-2"
+                            className="fixed inset-0 bg-black/60 z-2"
                             onClick={() => setShowForm(false)}
                         />
                     )}
@@ -123,7 +133,7 @@ export default function LandingPage({ errors }: { errors?: Record<string, string
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {features.map((feature, index) => (
-                            <div key={index} className="card bg-background text-center hover:shadow-lg transition-shadow px-4 py-12 border-3 border-foreground rounded-3xl">
+                            <div key={index} className="card bg-background text-center shadow-[8px_12px_0_#000000] transition-all hover:-translate-y-1 px-4 py-12 border-3 border-foreground rounded-3xl">
                                 <div className="w-16 h-16 bg-[var(--secondary-color)] rounded-xl flex items-center justify-center mx-auto mb-4">
                                     <feature.icon className="h-10 w-10"/>
                                 </div>
@@ -145,7 +155,7 @@ export default function LandingPage({ errors }: { errors?: Record<string, string
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {steps.map((step, index) => (
                             <div key={index} className="card text-center transition-shadow px-4 py-12 border-foreground">
-                                <div className="w-20 h-20 bg-accent-blue hover:shadow-lg rounded-2xl border-3 border-card-foreground flex items-center justify-center mx-auto mb-4">
+                                <div className="w-20 h-20 bg-accent-blue shadow-[4px_8px_0_#000000] transition-all hover:-translate-y-1 rounded-2xl border-3 border-card-foreground flex items-center justify-center mx-auto mb-4">
                                     <step.icon className="h-10 w-10"/>
                                 </div>
                                 <h3 className="text-xl font-semibold mb-2">{step.title}</h3>

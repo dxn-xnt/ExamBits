@@ -84,7 +84,7 @@ export default function GenerateExamForm() {
     };
 
     return (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card w-full max-w-md h-fit border-2 border-card-foreground rounded-3xl shadow-lg z-10">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card w-full max-w-md h-fit border-2 border-card-foreground rounded-3xl z-10">
             <form onSubmit={handleSubmit}>
                 <FieldGroup>
                     <FieldSet>
@@ -95,6 +95,7 @@ export default function GenerateExamForm() {
                                 size="sm"
                                 type="button"
                                 onClick={handleClose}
+                                className="hover:border-card-foreground bg-card border-2 border-transparent"
                             >
                                 <X />
                             </Button>
@@ -160,6 +161,7 @@ export default function GenerateExamForm() {
                             size="xs"
                             type="submit"
                             disabled={isSubmitting}
+                            className="transition-all hover:-translate-y-0.5 shadow-[4px_4px_0_#000000]"
                         >
                             {isSubmitting ? 'Generating...' : 'Generate'}
                         </Button>

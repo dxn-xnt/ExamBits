@@ -16,11 +16,13 @@ import {
 
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
-import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
+import {type BreadcrumbItem, type NavItem, type SharedData, User} from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import {NavUser} from "@/components/nav-user";
+import {UserProfile} from "@/components/user-profile";
 
 const mainNavItems: NavItem[] = [
     {
@@ -44,13 +46,27 @@ interface AppHeaderProps {
     breadcrumbs?: BreadcrumbItem[];
 }
 
+
+export const sampleUser: User = {
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    avatar: 'https://i.pravatar.cc/150?img=3', // optional
+    email_verified_at: '2025-12-01T12:00:00Z', // ISO string or null
+    two_factor_enabled: true,                  // optional
+    created_at: '2025-01-01T08:00:00Z',
+    updated_at: '2025-06-01T14:30:00Z',
+    role: 'admin',                              // additional property (demonstrates [key: string]: unknown)
+    last_login: '2025-12-03T10:15:00Z',        // another custom property
+};
+
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
     return (
         <>
-            <div className="fixed w-full border-b-2 border-card-foreground bg-background">
-                <div className="mx-auto flex h-16 items-center px-10">
+            <div className="fixed w-full border-b-2 border-card-foreground bg-background z-2">
+                <div className="mx-auto flex h-16 items-center px-4">
 
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
@@ -93,6 +109,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                 </Link>
                                             ))}
                                         </div>
+                                        <UserProfile user={sampleUser} isMobile={true}></UserProfile>
                                     </div>
                                 </div>
                             </SheetContent>
@@ -144,6 +161,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                 )}
                                             </NavigationMenuLink>
                                         ))}
+                                        <UserProfile user={sampleUser}></UserProfile>
                                     </NavigationMenuList>
                                 </NavigationMenu>
                             </div>
